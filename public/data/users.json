@@ -1,0 +1,28 @@
+[
+  {
+    "id": "u-1",
+    "name": "Alex Chen",
+    "email": "1078740866x@gmail.com",
+    "role": "admin",
+    "bio": "全栈工程师，热爱打造极致体验。",
+    "avatar": "https://i.pravatar.cc/160?img=1",
+    "headline": "资深前端工程师",
+    "location": "上海",
+    "language": "zh-CN",
+    "createdAt": "2023-12-01T09:00:00.000Z",
+    "updatedAt": "2023-12-20T10:00:00.000Z"
+  },
+  {
+    "id": "u-2",
+    "name": "Morgan Lee",
+    "email": "morgan@example.com",
+    "role": "author",
+    "bio": "专注于数据可视化与创意交互。",
+    "avatar": "https://i.pravatar.cc/160?img=5",
+    "headline": "前端可视化工程师",
+    "location": "深圳",
+    "language": "en",
+    "createdAt": "2023-11-15T08:30:00.000Z",
+    "updatedAt": "2023-12-15T11:00:00.000Z"
+  }
+]

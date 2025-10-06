@@ -1,0 +1,53 @@
+[
+  {
+    "id": "p-1",
+    "title": "构建高性能前端架构的五个关键点",
+    "slug": "high-performance-frontend-architecture",
+    "summary": "从性能指标、构建策略到团队协作的最佳实践，分享真实项目经验。",
+    "content": "# 前端架构的目标\n性能优化不止于 Lighthouse 分数……\n## 性能指标\n- FCP\n- LCP\n## 架构策略\n1. 组件解耦\n2. 数据驱动\n## 团队协作\n保持文档同步。",
+    "cover": "https://images.unsplash.com/photo-1522199991643-1e7c4c7f914b?auto=format&fit=crop&w=1200&q=80",
+    "category": "前端架构",
+    "tags": ["Performance", "Architecture", "Team"],
+    "authorId": "u-1",
+    "publishedAt": "2023-12-10T10:00:00.000Z",
+    "updatedAt": "2023-12-18T10:00:00.000Z",
+    "views": 982,
+    "likes": 126,
+    "favorites": 45,
+    "featured": true
+  },
+  {
+    "id": "p-2",
+    "title": "用可视化讲好数据故事",
+    "slug": "tell-data-stories",
+    "summary": "拆解数据叙事的框架，并分享 D3 + Vue 的实践技巧。",
+    "content": "# 数据叙事\n讲故事的技巧从结构开始。\n## 策略\n- 确定主线\n- 控制节奏\n## 工具链\n使用 Vue + D3 结合。",
+    "cover": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
+    "category": "数据可视化",
+    "tags": ["DataViz", "Storytelling"],
+    "authorId": "u-2",
+    "publishedAt": "2023-11-28T09:00:00.000Z",
+    "updatedAt": "2023-12-01T12:00:00.000Z",
+    "views": 754,
+    "likes": 98,
+    "favorites": 34,
+    "featured": false
+  },
+  {
+    "id": "p-3",
+    "title": "Vue 3 + Vite 打造可持续 Design System",
+    "slug": "vue3-design-system",
+    "summary": "探索组件抽象、Token、自动化文档的全流程。",
+    "content": "# Design System\nDesign Token 是系统的基础。\n## Token 分类\n- 颜色\n- 字体\n- 间距\n## 自动化\n通过 CI 生成文档。",
+    "cover": "https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=1200&q=80",
+    "category": "设计系统",
+    "tags": ["DesignSystem", "Vue3"],
+    "authorId": "u-1",
+    "publishedAt": "2023-11-05T08:00:00.000Z",
+    "updatedAt": "2023-11-06T13:00:00.000Z",
+    "views": 612,
+    "likes": 84,
+    "favorites": 29,
+    "featured": false
+  }
+]
