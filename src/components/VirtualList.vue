@@ -13,52 +13,63 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+<script setup>
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
-interface Props<T> {
-  items: T[];
-  itemSize: number;
-  height: number;
-  keyField?: keyof T;
-}
+const props = defineProps({
+  items: {
+    type: Array,
+    default: () => []
+  },
+  itemSize: {
+    type: Number,
+    required: true
+  },
+  height: {
+    type: Number,
+    required: true
+  },
+  keyField: {
+    type: [String, Number],
+    default: null
+  }
+})
 
-const props = defineProps<Props<Record<string, unknown>>>();
-const containerRef = ref<HTMLDivElement | null>(null);
-const scrollTop = ref(0);
+const containerRef = ref(null)
+const scrollTop = ref(0)
 
-const visibleCount = computed(() => Math.ceil(props.height / props.itemSize) + 1);
-const totalHeight = computed(() => props.items.length * props.itemSize);
+const visibleCount = computed(() => Math.ceil(props.height / props.itemSize) + 1)
+const totalHeight = computed(() => props.items.length * props.itemSize)
 
 const visibleItems = computed(() => {
-  const startIndex = Math.floor(scrollTop.value / props.itemSize);
-  const endIndex = Math.min(startIndex + visibleCount.value, props.items.length);
+  const startIndex = Math.floor(scrollTop.value / props.itemSize)
+  const endIndex = Math.min(startIndex + visibleCount.value, props.items.length)
   return props.items.slice(startIndex, endIndex).map((data, index) => ({
     key: props.keyField ? data[props.keyField] : startIndex + index,
     offset: (startIndex + index) * props.itemSize,
     data
-  }));
-});
+  }))
+})
 
 const onScroll = () => {
-  scrollTop.value = containerRef.value?.scrollTop ?? 0;
-};
+  scrollTop.value = containerRef.value?.scrollTop ?? 0
+}
 
 watch(
   () => props.items.length,
   () => {
     if (containerRef.value) {
-      containerRef.value.scrollTop = 0;
-      scrollTop.value = 0;
+      containerRef.value.scrollTop = 0
+      scrollTop.value = 0
     }
   }
-);
+)
 
 onMounted(() => {
-  containerRef.value?.addEventListener('scroll', onScroll, { passive: true });
-});
+  containerRef.value?.addEventListener('scroll', onScroll, { passive: true })
+})
 
 onUnmounted(() => {
-  containerRef.value?.removeEventListener('scroll', onScroll);
-});
+  containerRef.value?.removeEventListener('scroll', onScroll)
+})
 </script>

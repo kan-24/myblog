@@ -33,20 +33,26 @@
   </aside>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import { usePreferencesStore } from '@/stores/preferences';
+<script setup>
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { usePreferencesStore } from '@/stores/preferences'
 
-defineProps<{ open: boolean }>();
-defineEmits<{ (event: 'close'): void }>();
+defineProps({
+  open: {
+    type: Boolean,
+    default: false
+  }
+})
 
-const authStore = useAuthStore();
-const isAdmin = computed(() => authStore.user?.role === 'admin');
+defineEmits(['close'])
 
-const preferences = usePreferencesStore();
-const isDark = computed(() => preferences.theme === 'dark');
+const authStore = useAuthStore()
+const isAdmin = computed(() => authStore.user?.role === 'admin')
+
+const preferences = usePreferencesStore()
+const isDark = computed(() => preferences.theme === 'dark')
 const navBackgroundClass = computed(() =>
   isDark.value ? 'bg-slate-900/1 backdrop-blur' : 'bg-white/1 backdrop-blur'
-);
+)
 </script>

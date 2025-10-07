@@ -58,34 +58,34 @@
   <p v-else class="py-16 text-center text-slate-500">文章不存在。</p>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { usePostsStore } from '@/stores/posts';
-import { useHead } from '@unhead/vue';
-import dayjs from 'dayjs';
-import MarkdownRenderer from '@/components/blog/MarkdownRenderer.vue';
-import EngagementBar from '@/components/blog/EngagementBar.vue';
-import CommentsThread from '@/components/blog/CommentsThread.vue';
-import { extractHeadings } from '@/utils/toc';
+<script setup>
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { usePostsStore } from '@/stores/posts'
+import { useHead } from '@unhead/vue'
+import dayjs from 'dayjs'
+import MarkdownRenderer from '@/components/blog/MarkdownRenderer.vue'
+import EngagementBar from '@/components/blog/EngagementBar.vue'
+import CommentsThread from '@/components/blog/CommentsThread.vue'
+import { extractHeadings } from '@/utils/toc'
 
-const postsStore = usePostsStore();
-const route = useRoute();
-const postId = route.params.id as string;
+const postsStore = usePostsStore()
+const route = useRoute()
+const postId = route.params.id ? String(route.params.id) : ''
 
-const post = computed(() => postsStore.posts.find((item) => item.id === postId));
+const post = computed(() => postsStore.posts.find((item) => item.id === postId))
 
-const toc = computed(() => (post.value ? extractHeadings(post.value.content) : []));
+const toc = computed(() => (post.value ? extractHeadings(post.value.content) : []))
 
-const formatDate = (value: string) => dayjs(value).format('YYYY-MM-DD');
+const formatDate = (value) => dayjs(value).format('YYYY-MM-DD')
 
-const toggleLike = () => postsStore.toggleLike(postId);
-const toggleFavorite = () => postsStore.toggleFavorite(postId);
-const onTip = () => window.alert('感谢支持！(演示效果)');
+const toggleLike = () => postsStore.toggleLike(postId)
+const toggleFavorite = () => postsStore.toggleFavorite(postId)
+const onTip = () => window.alert('感谢支持！(演示效果)')
 
 onMounted(async () => {
-  await postsStore.ensureLoaded();
-});
+  await postsStore.ensureLoaded()
+})
 
 useHead(() => ({
   title: post.value ? `${post.value.title} | BlogX` : 'BlogX 文章',
@@ -97,5 +97,5 @@ useHead(() => ({
         { property: 'og:image', content: post.value.cover }
       ]
     : []
-}));
+}))
 </script>

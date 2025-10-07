@@ -13,7 +13,17 @@
   </div>
 </template>
 
-<script setup lang="ts">
-defineProps<{ likes: number; favorites: number }>();
-defineEmits<{ (event: 'like'): void; (event: 'favorite'): void; (event: 'tip'): void }>();
+<script setup>
+defineProps({
+  likes: {
+    type: Number,
+    required: true
+  },
+  favorites: {
+    type: Number,
+    required: true
+  }
+})
+
+defineEmits(['like', 'favorite', 'tip'])
 </script>

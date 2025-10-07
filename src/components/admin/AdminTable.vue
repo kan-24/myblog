@@ -55,57 +55,64 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, ref } from 'vue';
+<script setup>
+import { computed, ref } from 'vue'
 
-interface Column {
-  key: string;
-  label: string;
-}
+const props = defineProps({
+  rows: {
+    type: Array,
+    default: () => []
+  },
+  columns: {
+    type: Array,
+    default: () => []
+  },
+  pageSize: {
+    type: Number,
+    default: 10
+  },
+  rowKey: {
+    type: Function,
+    required: true
+  }
+})
 
-const props = defineProps<{
-  rows: Record<string, any>[];
-  columns: Column[];
-  pageSize?: number;
-  rowKey: (row: any) => string;
-}>();
-
-const search = ref('');
-const sortKey = ref('');
-const sortDirection = ref<'asc' | 'desc'>('asc');
-const page = ref(1);
-const pageSize = computed(() => props.pageSize ?? 10);
+const search = ref('')
+const sortKey = ref('')
+const sortDirection = ref('asc')
+const page = ref(1)
+const pageSize = computed(() => props.pageSize ?? 10)
 
 const filtered = computed(() => {
-  if (!search.value) return props.rows;
+  if (!search.value) return props.rows
   return props.rows.filter((row) =>
     Object.values(row).some((value) => String(value).toLowerCase().includes(search.value.toLowerCase()))
-  );
-});
+  )
+})
 
 const sorted = computed(() => {
-  if (!sortKey.value) return filtered.value;
+  if (!sortKey.value) return filtered.value
   return [...filtered.value].sort((a, b) => {
-    const direction = sortDirection.value === 'asc' ? 1 : -1;
-    if (a[sortKey.value] > b[sortKey.value]) return direction;
-    if (a[sortKey.value] < b[sortKey.value]) return -direction;
-    return 0;
-  });
-});
+    const direction = sortDirection.value === 'asc' ? 1 : -1
+    if (a[sortKey.value] > b[sortKey.value]) return direction
+    if (a[sortKey.value] < b[sortKey.value]) return -direction
+    return 0
+  })
+})
 
-const totalPages = computed(() => Math.max(1, Math.ceil(sorted.value.length / pageSize.value)));
+const totalPages = computed(() => Math.max(1, Math.ceil(sorted.value.length / pageSize.value)))
 
 const paginated = computed(() => {
-  const start = (page.value - 1) * pageSize.value;
-  return sorted.value.slice(start, start + pageSize.value);
-});
+  const start = (page.value - 1) * pageSize.value
+  return sorted.value.slice(start, start + pageSize.value)
+})
 
-const setSort = (key: string) => {
+const setSort = (key) => {
   if (sortKey.value === key) {
-    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
   } else {
-    sortKey.value = key;
-    sortDirection.value = 'asc';
+    sortKey.value = key
+    sortDirection.value = 'asc'
   }
-};
+}
 </script>

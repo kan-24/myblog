@@ -6,7 +6,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const emojis = ['👍', '🔥', '👏', '🤩', '💡', '🎯', '🙏', '🚀'];
-defineEmits<{ (event: 'select', emoji: string): void }>();
+<script setup>
+const emojis = ['👍', '🔥', '👏', '🤩', '💡', '🎯', '🙏', '🚀']
+defineEmits(['select'])
 </script>

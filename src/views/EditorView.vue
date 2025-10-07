@@ -57,21 +57,20 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { usePostsStore } from '@/stores/posts';
-import { useAuthStore } from '@/stores/auth';
-import Editor from '@toast-ui/editor';
-import '@toast-ui/editor/dist/toastui-editor.css';
-import type { Post } from '@/types/blog';
-import { LocalUploadAdapter } from '@/services/upload/LocalUploadAdapter';
+<script setup>
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { usePostsStore } from '@/stores/posts'
+import { useAuthStore } from '@/stores/auth'
+import Editor from '@toast-ui/editor'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import { LocalUploadAdapter } from '@/services/upload/LocalUploadAdapter'
 
-const postsStore = usePostsStore();
-const authStore = useAuthStore();
-const editorRoot = ref<HTMLDivElement | null>(null);
-let editor: Editor | null = null;
+const postsStore = usePostsStore()
+const authStore = useAuthStore()
+const editorRoot = ref(null)
+let editor = null
 
-const draft = reactive<Post>({
+const draft = reactive({
   id: crypto.randomUUID(),
   title: '',
   slug: '',
@@ -87,13 +86,13 @@ const draft = reactive<Post>({
   likes: 0,
   favorites: 0,
   featured: false
-});
+})
 
-const tags = ref('');
+const tags = ref('')
 
 const initEditor = () => {
-  if (!editorRoot.value) return;
-  const uploadAdapter = new LocalUploadAdapter();
+  if (!editorRoot.value) return
+  const uploadAdapter = new LocalUploadAdapter()
   editor = new Editor({
     el: editorRoot.value,
     initialEditType: 'markdown',
@@ -102,55 +101,65 @@ const initEditor = () => {
     minHeight: '400px',
     hooks: {
       async addImageBlobHook(blob, callback) {
-        const result = await uploadAdapter.upload({ name: blob.name ?? 'image', file: blob });
-        callback(result.url, '插入图片');
-        return false;
+        const result = await uploadAdapter.upload({ name: blob.name ?? 'image', file: blob })
+        callback(result.url, '插入图片')
+        return false
       }
     }
-  });
-};
+  })
+}
 
 const resetDraft = () => {
-  draft.title = '';
-  draft.summary = '';
-  draft.category = '';
-  draft.cover = '';
-  draft.tags = [];
-  tags.value = '';
-  editor?.setMarkdown('');
-};
+  draft.title = ''
+  draft.summary = ''
+  draft.category = ''
+  draft.cover = ''
+  draft.tags = []
+  tags.value = ''
+  editor?.setMarkdown('')
+}
 
 const saveDraft = async () => {
   if (!authStore.user) {
-    window.alert('请登录后写作');
-    return;
+    window.alert('请登录后写作')
+    return
   }
-  draft.content = editor?.getMarkdown() ?? '';
+
+  draft.content = editor?.getMarkdown() ?? ''
   draft.tags = tags.value
     .split(',')
     .map((tag) => tag.trim())
-    .filter(Boolean);
+    .filter(Boolean)
   draft.slug = draft.title
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '-');
+    .replace(/\s+/g, '-')
+
   if (!draft.title) {
-    window.alert('标题不能为空');
-    return;
+    window.alert('标题不能为空')
+    return
   }
-  draft.updatedAt = new Date().toISOString();
-  draft.authorId = authStore.user.id;
-  await postsStore.create({ ...draft, id: crypto.randomUUID() });
-  window.alert('文章已保存到 LocalStorage（演示）');
-};
+
+  draft.updatedAt = new Date().toISOString()
+  draft.authorId = authStore.user.id
+
+  try {
+    const created = await postsStore.create({ ...draft, id: draft.id })
+    draft.id = created.id
+    window.alert('文章已提交到后端')
+  } catch (error) {
+    console.error(error)
+    window.alert(error?.message ?? '文章保存失败，请稍后重试')
+  }
+}
 
 onMounted(() => {
-  initEditor();
-});
+  initEditor()
+})
 
 onBeforeUnmount(() => {
-  editor?.destroy();
-});
+  editor?.destroy()
+})
 </script>
 
 <style scoped>

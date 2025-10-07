@@ -20,13 +20,13 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, ref } from 'vue';
-import HeaderBar from './HeaderBar.vue';
-import SidebarNav from './SidebarNav.vue';
-import FooterBar from './FooterBar.vue';
-import ParticlesBackground from '@/components/visual/ParticlesBackground.vue';
+<script setup>
+import { computed, ref } from 'vue'
+import HeaderBar from './HeaderBar.vue'
+import SidebarNav from './SidebarNav.vue'
+import FooterBar from './FooterBar.vue'
+import ParticlesBackground from '@/components/visual/ParticlesBackground.vue'
 
-const sidebarOpen = ref(false);
-const shellTextClass = computed(() => 'text-slate-900 dark:text-slate-100');
+const sidebarOpen = ref(false)
+const shellTextClass = computed(() => 'text-slate-900 dark:text-slate-100')
 </script>

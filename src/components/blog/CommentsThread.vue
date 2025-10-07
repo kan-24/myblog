@@ -72,55 +72,60 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
-import { useCommentsStore } from '@/stores/comments';
-import { useAuthStore } from '@/stores/auth';
-import type { Comment } from '@/types/blog';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import 'dayjs/locale/zh-cn';
-import EmojiPicker from './EmojiPicker.vue';
+<script setup>
+import { computed, onMounted, reactive } from 'vue'
+import { useCommentsStore } from '@/stores/comments'
+import { useAuthStore } from '@/stores/auth'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/zh-cn'
+import EmojiPicker from './EmojiPicker.vue'
 
-const props = defineProps<{ postId: string }>();
-dayjs.extend(relativeTime);
-dayjs.locale('zh-cn');
+const props = defineProps({
+  postId: {
+    type: String,
+    required: true
+  }
+})
 
-const authStore = useAuthStore();
-const commentsStore = useCommentsStore();
+dayjs.extend(relativeTime)
+dayjs.locale('zh-cn')
 
-const canComment = computed(() => Boolean(authStore.user));
-const activeForm = computed(() => Boolean(formState.targetId));
+const authStore = useAuthStore()
+const commentsStore = useCommentsStore()
 
-const formState = reactive<{ targetId: string | null; content: string; parentId: string | null }>({
+const canComment = computed(() => Boolean(authStore.user))
+const activeForm = computed(() => Boolean(formState.targetId))
+
+const formState = reactive({
   targetId: null,
   content: '',
   parentId: null
-});
+})
 
-const appendEmoji = (emoji: string) => {
-  formState.content = `${formState.content}${emoji}`;
-};
+const appendEmoji = (emoji) => {
+  formState.content = `${formState.content}${emoji}`
+}
 
 const startNewComment = () => {
-  formState.targetId = 'new';
-  formState.parentId = null;
-};
+  formState.targetId = 'new'
+  formState.parentId = null
+}
 
-const replyTo = (parentId: string) => {
-  formState.targetId = parentId;
-  formState.parentId = parentId;
-};
+const replyTo = (parentId) => {
+  formState.targetId = parentId
+  formState.parentId = parentId
+}
 
 const cancel = () => {
-  formState.targetId = null;
-  formState.content = '';
-  formState.parentId = null;
-};
+  formState.targetId = null
+  formState.content = ''
+  formState.parentId = null
+}
 
 const submitComment = () => {
-  if (!authStore.user) return;
-  const newComment: Comment = {
+  if (!authStore.user) return
+  const newComment = {
     id: crypto.randomUUID(),
     postId: props.postId,
     authorId: authStore.user.id,
@@ -128,36 +133,40 @@ const submitComment = () => {
     content: formState.content.trim(),
     createdAt: new Date().toISOString(),
     reactions: []
-  };
-  commentsStore.add(newComment);
-  cancel();
-};
+  }
+  commentsStore.add(newComment)
+  cancel()
+}
 
-const formatDate = (value: string) => dayjs(value).fromNow();
+const formatDate = (value) => dayjs(value).fromNow()
 
-const resolveAuthor = (authorId: string) => {
-  const target = authStore.users.find((candidate) => candidate.id === authorId);
-  return target?.name ?? '访客';
-};
+const resolveAuthor = (authorId) => {
+  const target = authStore.users.find((candidate) => candidate.id === authorId)
+  return target?.name ?? '访客'
+}
 
 const threadedComments = computed(() => {
-  const source = commentsStore.byPost(props.postId);
-  const map = new Map<string, Comment & { children: Comment[] }>();
-  const roots: (Comment & { children: Comment[] })[] = [];
+  const source = commentsStore.byPost(props.postId)
+  const map = new Map()
+  const roots = []
+
   source.forEach((comment) => {
-    map.set(comment.id, { ...comment, children: [] });
-  });
+    map.set(comment.id, { ...comment, children: [] })
+  })
+
   map.forEach((comment) => {
     if (comment.parentId && map.has(comment.parentId)) {
-      map.get(comment.parentId)!.children.push(comment);
+      const parent = map.get(comment.parentId)
+      if (parent) parent.children.push(comment)
     } else {
-      roots.push(comment);
+      roots.push(comment)
     }
-  });
-  return roots;
-});
+  })
+
+  return roots
+})
 
 onMounted(async () => {
-  await authStore.ensureLoaded?.();
-});
+  await authStore.ensureLoaded?.()
+})
 </script>

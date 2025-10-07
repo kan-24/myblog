@@ -36,20 +36,20 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import AdminTable from '@/components/admin/AdminTable.vue';
-import { usePostsStore } from '@/stores/posts';
-import { useCommentsStore } from '@/stores/comments';
-import { useAuthStore } from '@/stores/auth';
-import { useVisitorsStore } from '@/stores/visitors';
-import { onMounted } from 'vue';
+<script setup>
+import { onMounted } from 'vue'
+import AdminTable from '@/components/admin/AdminTable.vue'
+import { usePostsStore } from '@/stores/posts'
+import { useCommentsStore } from '@/stores/comments'
+import { useAuthStore } from '@/stores/auth'
+import { useVisitorsStore } from '@/stores/visitors'
 
-const postsStore = usePostsStore();
-const commentsStore = useCommentsStore();
-const authStore = useAuthStore();
-const visitorsStore = useVisitorsStore();
+const postsStore = usePostsStore()
+const commentsStore = useCommentsStore()
+const authStore = useAuthStore()
+const visitorsStore = useVisitorsStore()
 
-const rowKey = (row: any) => row.id;
+const rowKey = (row) => row.id
 
 const postColumns = [
   { key: 'title', label: '标题' },
@@ -58,36 +58,36 @@ const postColumns = [
   { key: 'views', label: '浏览' },
   { key: 'likes', label: '点赞' },
   { key: 'actions', label: '操作' }
-];
+]
 
 const commentColumns = [
   { key: 'postId', label: '文章 ID' },
   { key: 'content', label: '内容' },
   { key: 'authorId', label: '作者' },
   { key: 'createdAt', label: '时间' }
-];
+]
 
 const userColumns = [
   { key: 'name', label: '姓名' },
   { key: 'email', label: '邮箱' },
   { key: 'role', label: '角色' },
   { key: 'language', label: '语言' }
-];
+]
 
 const visitorColumns = [
   { key: 'location', label: '来源' },
   { key: 'userAgent', label: '设备' },
   { key: 'referrer', label: '入口' },
   { key: 'enteredAt', label: '时间' }
-];
+]
 
-const editPost = (id: string) => {
-  window.alert(`编辑文章 ${id}（演示）`);
-};
+const editPost = (id) => {
+  window.alert(`编辑文章 ${id}（演示）`)
+}
 
-const deletePost = (id: string) => {
-  postsStore.remove(id);
-};
+const deletePost = (id) => {
+  postsStore.remove(id)
+}
 
 onMounted(async () => {
   await Promise.all([
@@ -95,6 +95,6 @@ onMounted(async () => {
     commentsStore.ensureLoaded(),
     authStore.ensureLoaded?.(),
     visitorsStore.ensureLoaded()
-  ]);
-});
+  ])
+})
 </script>

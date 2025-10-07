@@ -7,7 +7,8 @@
   </button>
 </template>
 
-<script setup lang="ts">
-import { usePreferencesStore } from '@/stores/preferences';
-const preferences = usePreferencesStore();
+<script setup>
+import { usePreferencesStore } from '@/stores/preferences'
+
+const preferences = usePreferencesStore()
 </script>

@@ -9,12 +9,13 @@
   </select>
 </template>
 
-<script setup lang="ts">
-import { usePreferencesStore } from '@/stores/preferences';
-const preferences = usePreferencesStore();
+<script setup>
+import { usePreferencesStore } from '@/stores/preferences'
 
-function onSwitch(event: Event) {
-  const target = event.target as HTMLSelectElement;
-  preferences.switchLocale(target.value as 'zh-CN' | 'en');
+const preferences = usePreferencesStore()
+
+function onSwitch(event) {
+  const target = event.target
+  preferences.switchLocale(target.value)
 }
 </script>

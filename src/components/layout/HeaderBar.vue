@@ -22,13 +22,14 @@
   </header>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-defineEmits<{ (event: 'toggle-sidebar'): void }>();
-import ThemeToggle from './ThemeToggle.vue';
-import LanguageSwitcher from './LanguageSwitcher.vue';
+<script setup>
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import ThemeToggle from './ThemeToggle.vue'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 
-const authStore = useAuthStore();
-const isAdmin = computed(() => authStore.user?.role === 'admin');
+defineEmits(['toggle-sidebar'])
+
+const authStore = useAuthStore()
+const isAdmin = computed(() => authStore.user?.role === 'admin')
 </script>

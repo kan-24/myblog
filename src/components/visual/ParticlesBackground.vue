@@ -8,9 +8,8 @@
   />
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue'
-import type { Container } from 'tsparticles-engine'
 import { usePreferencesStore } from '@/stores/preferences'
 
 const preferences = usePreferencesStore()
@@ -104,7 +103,7 @@ const particlesOptions = computed(() => {
   }
 })
 
-const onParticlesLoaded = async (container?: Container) => {
+const onParticlesLoaded = async (container) => {
   if (import.meta.env.DEV) {
     console.debug('tsParticles container ready', container)
   }

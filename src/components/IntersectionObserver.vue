@@ -2,27 +2,25 @@
   <div ref="target" class="h-1 w-full" />
 </template>
 
-<script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+<script setup>
+import { onMounted, onUnmounted, ref } from 'vue'
 
-const emit = defineEmits<{
-  (event: 'intersect'): void;
-}>();
+const emit = defineEmits(['intersect'])
 
-const target = ref<HTMLDivElement | null>(null);
-let observer: IntersectionObserver | null = null;
+const target = ref(null)
+let observer = null
 
 onMounted(() => {
-  if (!target.value) return;
+  if (!target.value) return
   observer = new IntersectionObserver(([entry]) => {
     if (entry.isIntersecting) {
-      emit('intersect');
+      emit('intersect')
     }
-  });
-  observer.observe(target.value);
-});
+  })
+  observer.observe(target.value)
+})
 
 onUnmounted(() => {
-  if (observer && target.value) observer.unobserve(target.value);
-});
+  if (observer && target.value) observer.unobserve(target.value)
+})
 </script>

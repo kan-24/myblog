@@ -111,16 +111,16 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import { reactive, ref, watch } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+<script setup>
+import { reactive, ref, watch } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
-const auth = useAuthStore();
+const auth = useAuthStore()
 
-const loginEmail = ref('');
-const registerEmail = ref('');
-const registerName = ref('');
-const placeholder = 'https://avatars.githubusercontent.com/u/000?v=4';
+const loginEmail = ref('')
+const registerEmail = ref('')
+const registerName = ref('')
+const placeholder = 'https://avatars.githubusercontent.com/u/000?v=4'
 
 const profile = reactive({
   name: '',
@@ -129,45 +129,45 @@ const profile = reactive({
   location: '',
   language: 'zh-CN',
   avatar: ''
-});
+})
 
 watch(
   () => auth.user,
   (user) => {
-    if (user) Object.assign(profile, user);
+    if (user) Object.assign(profile, user)
   },
   { immediate: true }
-);
+)
 
 const onLogin = async () => {
   try {
-    await auth.login(loginEmail.value);
-  } catch (error: any) {
-    window.alert(error.message);
+    await auth.login(loginEmail.value)
+  } catch (error) {
+    window.alert(error?.message ?? '登录失败')
   }
-};
+}
 
 const onRegister = async () => {
   try {
-    await auth.register({ email: registerEmail.value, name: registerName.value });
-  } catch (error: any) {
-    window.alert(error.message);
+    await auth.register({ email: registerEmail.value, name: registerName.value })
+  } catch (error) {
+    window.alert(error?.message ?? '注册失败')
   }
-};
+}
 
 const onProfileUpdate = () => {
-  auth.updateProfile(profile);
-  window.alert('资料已更新（LocalStorage）');
-};
+  auth.updateProfile(profile)
+  window.alert('资料已更新（LocalStorage）')
+}
 
-const onAvatarChange = async (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
+const onAvatarChange = async (event) => {
+  const target = event.target
+  const file = target?.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
   reader.onload = () => {
-    profile.avatar = reader.result as string;
-  };
-  reader.readAsDataURL(file);
-};
+    profile.avatar = /** @type {string} */ (reader.result)
+  }
+  reader.readAsDataURL(file)
+}
 </script>

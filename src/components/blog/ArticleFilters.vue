@@ -17,30 +17,34 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+<script setup>
+import { computed, ref, watch } from 'vue'
 
-const props = defineProps<{
-  categories: string[];
-  tags: string[];
-}>();
+const props = defineProps({
+  categories: {
+    type: Array,
+    default: () => []
+  },
+  tags: {
+    type: Array,
+    default: () => []
+  }
+})
 
-const emit = defineEmits<{
-  (event: 'change', payload: { search: string; category: string; tag: string }): void;
-}>();
+const emit = defineEmits(['change'])
 
-const searchText = ref('');
-const selectedCategory = ref('');
-const selectedTag = ref('');
+const searchText = ref('')
+const selectedCategory = ref('')
+const selectedTag = ref('')
 
 watch([searchText, selectedCategory, selectedTag], () => {
   emit('change', {
     search: searchText.value,
     category: selectedCategory.value,
     tag: selectedTag.value
-  });
-});
+  })
+})
 
-const categories = computed(() => props.categories);
-const tags = computed(() => props.tags);
+const categories = computed(() => props.categories)
+const tags = computed(() => props.tags)
 </script>

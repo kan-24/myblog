@@ -25,7 +25,7 @@
       class="rounded-2xl border border-transparent bg-transparent"
     >
       <template #default="{ item }">
-        <ArticleCard :post="item as any" class="mb-4" />
+        <ArticleCard :post="item" class="mb-4" />
       </template>
     </VirtualList>
 
@@ -35,62 +35,62 @@
   </section>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
-import { usePostsStore } from '@/stores/posts';
-import { useCommentsStore } from '@/stores/comments';
-import { useAuthStore } from '@/stores/auth';
-import { useHead } from '@unhead/vue';
-import ArticleFilters from '@/components/blog/ArticleFilters.vue';
-import ArticleCard from '@/components/blog/ArticleCard.vue';
-import VirtualList from '@/components/VirtualList.vue';
-import IntersectionObserver from '@/components/IntersectionObserver.vue';
+<script setup>
+import { computed, onMounted, reactive, ref } from 'vue'
+import { usePostsStore } from '@/stores/posts'
+import { useCommentsStore } from '@/stores/comments'
+import { useAuthStore } from '@/stores/auth'
+import { useHead } from '@unhead/vue'
+import ArticleFilters from '@/components/blog/ArticleFilters.vue'
+import ArticleCard from '@/components/blog/ArticleCard.vue'
+import VirtualList from '@/components/VirtualList.vue'
+import IntersectionObserver from '@/components/IntersectionObserver.vue'
 
-const postsStore = usePostsStore();
-const commentsStore = useCommentsStore();
-const authStore = useAuthStore();
-const isAdmin = computed(() => authStore.user?.role === 'admin');
+const postsStore = usePostsStore()
+const commentsStore = useCommentsStore()
+const authStore = useAuthStore()
+const isAdmin = computed(() => authStore.user?.role === 'admin')
 
 const state = reactive({
   search: '',
   category: '',
   tag: ''
-});
+})
 
-const page = ref(1);
-const pageSize = 10;
-const cardHeight = 900;
-const listHeight = 900;
+const page = ref(1)
+const pageSize = 10
+const cardHeight = 320
+const listHeight = 900
 
 const loadMore = () => {
-  page.value += 1;
-};
+  page.value += 1
+}
 
-const onFiltersChange = (payload: { search: string; category: string; tag: string }) => {
-  state.search = payload.search;
-  state.category = payload.category;
-  state.tag = payload.tag;
-  page.value = 1;
-};
+const onFiltersChange = (payload) => {
+  state.search = payload.search
+  state.category = payload.category
+  state.tag = payload.tag
+  page.value = 1
+}
 
 const filteredPosts = computed(() => {
-  const searchLower = state.search.toLowerCase();
+  const searchLower = state.search.toLowerCase()
   return postsStore.posts.filter((post) => {
     const matchesSearch =
       !state.search ||
       post.title.toLowerCase().includes(searchLower) ||
-      post.summary.toLowerCase().includes(searchLower);
-    const matchesCategory = !state.category || post.category === state.category;
-    const matchesTag = !state.tag || post.tags.includes(state.tag);
-    return matchesSearch && matchesCategory && matchesTag;
-  });
-});
+      post.summary.toLowerCase().includes(searchLower)
+    const matchesCategory = !state.category || post.category === state.category
+    const matchesTag = !state.tag || post.tags.includes(state.tag)
+    return matchesSearch && matchesCategory && matchesTag
+  })
+})
 
-const visiblePosts = computed(() => filteredPosts.value.slice(0, page.value * pageSize));
+const visiblePosts = computed(() => filteredPosts.value.slice(0, page.value * pageSize))
 
 onMounted(async () => {
-  await Promise.all([postsStore.ensureLoaded(), commentsStore.ensureLoaded()]);
-});
+  await Promise.all([postsStore.ensureLoaded(), commentsStore.ensureLoaded()])
+})
 
 useHead({
   title: 'BlogX | 现代职业博客',
@@ -101,5 +101,5 @@ useHead({
     { property: 'og:type', content: 'website' }
   ],
   link: [{ rel: 'canonical', href: 'https://example.com/' }]
-});
+})
 </script>

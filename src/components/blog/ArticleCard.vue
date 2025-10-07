@@ -33,12 +33,16 @@
   </article>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue';
-import type { Post } from '@/types/blog';
-import dayjs from 'dayjs';
+<script setup>
+import { computed } from 'vue'
+import dayjs from 'dayjs'
 
-const props = defineProps<{ post: Post }>();
+const props = defineProps({
+  post: {
+    type: Object,
+    required: true
+  }
+})
 
-const formattedDate = computed(() => dayjs(props.post.publishedAt).format('YYYY-MM-DD'));
+const formattedDate = computed(() => dayjs(props.post.publishedAt).format('YYYY-MM-DD'))
 </script>

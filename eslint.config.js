@@ -1,15 +1,13 @@
-import pluginVue from 'eslint-plugin-vue';
-import tseslint from 'typescript-eslint';
-import prettier from 'eslint-config-prettier';
+import pluginVue from 'eslint-plugin-vue'
+import prettier from 'eslint-config-prettier'
 
 export default [
   {
-    files: ['src/**/*.{ts,vue}'],
+    files: ['**/*.{js,vue}'],
     languageOptions: {
-      parser: tseslint.parser,
       parserOptions: {
-        project: './tsconfig.app.json',
-        extraFileExtensions: ['.vue']
+        ecmaVersion: 'latest',
+        sourceType: 'module'
       }
     },
     plugins: {
@@ -17,9 +15,8 @@ export default [
     },
     rules: {
       ...pluginVue.configs['vue3-essential'].rules,
-      ...tseslint.configs.recommended.rules,
       'vue/multi-word-component-names': 'off'
     }
   },
   prettier
-];
+]
