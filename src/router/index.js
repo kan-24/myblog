@@ -13,10 +13,11 @@ const routes = [
     props: true
   },
   {
-    path: '/editor',
+    path: '/editor/:id?',
     name: 'editor',
     component: () => import('@/views/EditorView.vue'),
-    meta: { requiresAdmin: true }
+    meta: { requiresAdmin: true },
+    props: true
   },
   {
     path: '/user',

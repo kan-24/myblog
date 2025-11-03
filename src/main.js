@@ -4,6 +4,7 @@ import { createHead } from '@unhead/vue/client'
 import App from './App.vue'
 import router from './router'
 import lazy from './directives/lazy'
+import { i18n, setI18nLocale } from './i18n'
 import { usePreferencesStore } from './stores/preferences'
 import { useAuthStore } from './stores/auth'
 import Particles from '@tsparticles/vue3'
@@ -18,6 +19,7 @@ const head = createHead()
 app.use(pinia)
 app.use(router)
 app.use(head)
+app.use(i18n)
 app.directive('lazy', lazy)
 app.use(Particles, {
   init: async (engine) => {
@@ -27,13 +29,14 @@ app.use(Particles, {
 
 const preferences = usePreferencesStore()
 preferences.initFromStorage()
+setI18nLocale(preferences.locale)
 
 router.beforeEach(async (to) => {
   if (!to.meta?.requiresAdmin) return true
   const authStore = useAuthStore()
   await authStore.ensureLoaded?.()
   if (authStore.user?.role === 'admin') return true
-  window.alert('仅管理员可访问该功能')
+  window.alert(i18n.global.t('auth.adminRequired'))
   return { name: 'home' }
 })
 

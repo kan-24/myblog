@@ -1,0 +1,162 @@
+{
+  "nav": {
+    "home": "Home",
+    "editor": "Write",
+    "user": "Dashboard",
+    "admin": "Admin",
+    "toggle": "Toggle navigation"
+  },
+  "language": {
+    "label": "Select language",
+    "zh": "中文",
+    "en": "English",
+    "ja": "日本語"
+  },
+  "common": {
+    "operationFailed": "Operation failed. Please try again later.",
+    "serverError": "The server returned an error."
+  },
+  "home": {
+    "newPost": "✍️ New Post",
+    "empty": "No matching posts yet.",
+    "title": "BlogX | Modern Professional Blog",
+    "description": "BlogX helps you showcase work, share insights, and connect with new opportunities.",
+    "ogTitle": "BlogX",
+    "ogDescription": "A modern, elegant personal blog template for your career storytelling."
+  },
+  "filters": {
+    "searchPlaceholder": "Search posts...",
+    "searchButton": "Search",
+    "allCategories": "All categories",
+    "allTags": "All tags"
+  },
+  "post": {
+    "publishedOn": "Published on {date}",
+    "views": "{count} views",
+    "tableOfContents": "Table of contents",
+    "tags": "Tags",
+    "share": "Share",
+    "tipThanks": "Thanks for the support! (demo)",
+    "notFound": "Post not found."
+  },
+  "engagement": {
+    "tip": "Tip"
+  },
+  "comments": {
+    "sectionAria": "Comments",
+    "title": "Comments",
+    "write": "Write a comment",
+    "placeholder": "Share your thoughts...",
+    "cancel": "Cancel",
+    "submit": "Publish",
+    "reply": "Reply",
+    "guest": "Guest"
+  },
+  "editor": {
+    "title": "Writing Studio",
+    "subtitle": "Markdown with live preview, stored with base64 images.",
+    "reset": "Reset",
+    "submit": "Publish / Update",
+    "placeholders": {
+      "title": "Title",
+      "summary": "Summary",
+      "category": "Category",
+      "tags": "Tags (comma separated)",
+      "cover": "Cover image URL"
+    },
+    "imageAlt": "Insert image",
+    "alerts": {
+      "loginRequired": "Please sign in to write.",
+      "titleRequired": "Title is required.",
+      "createSuccess": "Post submitted to the backend.",
+      "updateSuccess": "Post updated.",
+      "saveError": "Failed to save. Please try again later.",
+      "notFound": "Post not found or has been removed."
+    }
+  },
+  "admin": {
+    "title": "Admin Console",
+    "description": "Manage posts, comments, users, and visitors (demo data).",
+    "sections": {
+      "posts": "Post management",
+      "comments": "Comment management",
+      "users": "User management",
+      "visitors": "Visitor log"
+    },
+    "posts": {
+      "columns": {
+        "title": "Title",
+        "category": "Category",
+        "publishedAt": "Published",
+        "views": "Views",
+        "likes": "Likes",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "comments": {
+      "columns": {
+        "postId": "Post ID",
+        "content": "Content",
+        "author": "Author",
+        "createdAt": "Created"
+      }
+    },
+    "users": {
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "language": "Language"
+      }
+    },
+    "visitors": {
+      "columns": {
+        "location": "Location",
+        "userAgent": "Device",
+        "referrer": "Referrer",
+        "enteredAt": "Timestamp"
+      }
+    },
+    "alerts": {
+      "confirmDelete": "Delete this post? This action cannot be undone.",
+      "deleteSuccess": "Post deleted.",
+      "deleteError": "Failed to delete. Please try again."
+    }
+  },
+  "user": {
+    "title": "User Center",
+    "description": "Manage sign-in, registration, and profile details.",
+    "login": "Sign in",
+    "register": "Register",
+    "logout": "Sign out",
+    "profileEdit": "Edit profile",
+    "placeholders": {
+      "email": "Email",
+      "name": "Name",
+      "headline": "Headline",
+      "location": "Location",
+      "bio": "Bio",
+      "intro": "Add a short intro",
+      "avatar": "Avatar upload (base64)"
+    },
+    "buttons": {
+      "login": "Sign in",
+      "register": "Register",
+      "updateProfile": "Update profile"
+    },
+    "alerts": {
+      "loginError": "Sign-in failed.",
+      "registerError": "Registration failed.",
+      "profileUpdated": "Profile updated (local storage)."
+    }
+  },
+  "auth": {
+    "userNotFound": "User not found.",
+    "emailExists": "Email is already registered.",
+    "adminRequired": "Admins only."
+  }
+}

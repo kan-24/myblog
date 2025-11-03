@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS posts (
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) NOT NULL,
     summary TEXT,
-    content CLOB,
+    content TEXT,
     cover VARCHAR(512),
     category VARCHAR(128),
     tags_csv VARCHAR(1024),

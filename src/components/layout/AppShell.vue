@@ -6,8 +6,9 @@
       :class="shellTextClass"
     >
       <HeaderBar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
+      <div class="h-16 md:h-20" aria-hidden="true"></div>
       <div class="flex flex-1">
-        <SidebarNav :open="sidebarOpen" @close="sidebarOpen = false" />
+        <!-- <SidebarNav :open="sidebarOpen" @close="sidebarOpen = false" /> -->
         <main
           class="flex-1 px-4 pb-16 pt-4 sm:px-6 lg:px-8"
           @keyup.escape="sidebarOpen = false"

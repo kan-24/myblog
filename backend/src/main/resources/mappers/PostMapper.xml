@@ -20,22 +20,94 @@
             favorites,
             featured
         ) VALUES (
-            #{id},
-            #{title},
-            #{slug},
-            #{summary},
-            #{content},
-            #{cover},
-            #{category},
-            #{tagsCsv},
-            #{authorId},
-            #{publishedAt},
-            #{updatedAt},
-            #{views},
-            #{likes},
-            #{favorites},
-            #{featured}
+            #{post.id},
+            #{post.title},
+            #{post.slug},
+            #{post.summary},
+            #{post.content},
+            #{post.cover},
+            #{post.category},
+            #{post.tagsCsv},
+            #{post.authorId},
+            #{post.publishedAt},
+            #{post.updatedAt},
+            #{post.views},
+            #{post.likes},
+            #{post.favorites},
+            #{post.featured}
         )
     </insert>
+
+    <select id="findAll" resultType="com.example.blogx.post.PostEntity">
+        SELECT
+            id,
+            title,
+            slug,
+            summary,
+            content,
+            cover,
+            category,
+            tags_csv,
+            author_id,
+            published_at,
+            updated_at,
+            views,
+            likes,
+            favorites,
+            featured
+        FROM posts
+        ORDER BY published_at DESC
+    </select>
+
+    <select id="findById" parameterType="java.lang.String" resultType="com.example.blogx.post.PostEntity">
+        SELECT
+            id,
+            title,
+            slug,
+            summary,
+            content,
+            cover,
+            category,
+            tags_csv,
+            author_id,
+            published_at,
+            updated_at,
+            views,
+            likes,
+            favorites,
+            featured
+        FROM posts
+        WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="com.example.blogx.post.PostEntity">
+        UPDATE posts
+        SET
+            title = #{post.title},
+            slug = #{post.slug},
+            summary = #{post.summary},
+            content = #{post.content},
+            cover = #{post.cover},
+            category = #{post.category},
+            tags_csv = #{post.tagsCsv},
+            author_id = #{post.authorId},
+            published_at = #{post.publishedAt},
+            updated_at = #{post.updatedAt},
+            views = #{post.views},
+            likes = #{post.likes},
+            favorites = #{post.favorites},
+            featured = #{post.featured}
+        WHERE id = #{post.id}
+    </update>
+
+    <update id="updateLikes">
+        UPDATE posts
+        SET likes = #{likes}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM posts WHERE id = #{id}
+    </delete>
 
 </mapper>

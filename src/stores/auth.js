@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { getStorage, setStorage, removeStorage } from '@/utils/storage'
+import { i18n } from '@/i18n'
 import { loadInitialUsers } from '@/utils/dataLoader'
 import dayjs from 'dayjs'
 
@@ -30,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
     async login(email) {
       await this.ensureLoaded()
       const existing = this.users.find((candidate) => candidate.email === email)
-      if (!existing) throw new Error('用户不存在')
+      if (!existing) throw new Error(i18n.global.t('auth.userNotFound'))
       this.user = existing
       this.token = buildFakeToken(existing.id)
       setStorage('user', existing)
@@ -39,7 +40,7 @@ export const useAuthStore = defineStore('auth', {
     async register(payload) {
       await this.ensureLoaded()
       const exists = this.users.some((candidate) => candidate.email === payload.email)
-      if (exists) throw new Error('邮箱已注册')
+      if (exists) throw new Error(i18n.global.t('auth.emailExists'))
       const newUser = {
         id: crypto.randomUUID(),
         name: payload.name,

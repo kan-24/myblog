@@ -1,0 +1,162 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "editor": "執筆",
+    "user": "マイページ",
+    "admin": "管理",
+    "toggle": "ナビゲーションを切り替える"
+  },
+  "language": {
+    "label": "言語を選択",
+    "zh": "中文",
+    "en": "English",
+    "ja": "日本語"
+  },
+  "common": {
+    "operationFailed": "操作に失敗しました。しばらくしてから再試行してください。",
+    "serverError": "サーバーでエラーが発生しました。"
+  },
+  "home": {
+    "newPost": "✍️ 新規投稿",
+    "empty": "該当する記事がありません。",
+    "title": "BlogX | モダンなキャリアブログ",
+    "description": "BlogX は作品を紹介し、洞察を共有し、機会とつながるためのモダンなブログです。",
+    "ogTitle": "BlogX",
+    "ogDescription": "キャリアストーリーを支えるモダンでエレガントなブログテンプレート。"
+  },
+  "filters": {
+    "searchPlaceholder": "記事を検索...",
+    "searchButton": "検索",
+    "allCategories": "すべてのカテゴリ",
+    "allTags": "すべてのタグ"
+  },
+  "post": {
+    "publishedOn": "公開日 {date}",
+    "views": "{count} 回閲覧",
+    "tableOfContents": "目次",
+    "tags": "タグ",
+    "share": "共有",
+    "tipThanks": "サポートありがとうございます！（デモ）",
+    "notFound": "記事が見つかりません。"
+  },
+  "engagement": {
+    "tip": "投げ銭"
+  },
+  "comments": {
+    "sectionAria": "コメント欄",
+    "title": "コメント",
+    "write": "コメントを書く",
+    "placeholder": "感想を共有しましょう...",
+    "cancel": "キャンセル",
+    "submit": "投稿",
+    "reply": "返信",
+    "guest": "ゲスト"
+  },
+  "editor": {
+    "title": "執筆エディタ",
+    "subtitle": "Markdown とライブプレビュー、画像は base64 保存。",
+    "reset": "リセット",
+    "submit": "公開 / 更新",
+    "placeholders": {
+      "title": "タイトル",
+      "summary": "概要",
+      "category": "カテゴリ",
+      "tags": "タグ（カンマ区切り）",
+      "cover": "カバー画像 URL"
+    },
+    "imageAlt": "画像を挿入",
+    "alerts": {
+      "loginRequired": "執筆するにはログインしてください。",
+      "titleRequired": "タイトルは必須です。",
+      "createSuccess": "記事をバックエンドに送信しました。",
+      "updateSuccess": "記事を更新しました。",
+      "saveError": "保存に失敗しました。時間をおいて再試行してください。",
+      "notFound": "記事が存在しないか削除されています。"
+    }
+  },
+  "admin": {
+    "title": "管理コンソール",
+    "description": "記事・コメント・ユーザー・訪問者を管理（デモデータ）。",
+    "sections": {
+      "posts": "記事管理",
+      "comments": "コメント管理",
+      "users": "ユーザー管理",
+      "visitors": "訪問記録"
+    },
+    "posts": {
+      "columns": {
+        "title": "タイトル",
+        "category": "カテゴリ",
+        "publishedAt": "公開日",
+        "views": "閲覧",
+        "likes": "いいね",
+        "actions": "操作"
+      },
+      "actions": {
+        "edit": "編集",
+        "delete": "削除"
+      }
+    },
+    "comments": {
+      "columns": {
+        "postId": "記事 ID",
+        "content": "内容",
+        "author": "投稿者",
+        "createdAt": "日時"
+      }
+    },
+    "users": {
+      "columns": {
+        "name": "氏名",
+        "email": "メール",
+        "role": "役割",
+        "language": "言語"
+      }
+    },
+    "visitors": {
+      "columns": {
+        "location": "地域",
+        "userAgent": "デバイス",
+        "referrer": "参照元",
+        "enteredAt": "訪問時刻"
+      }
+    },
+    "alerts": {
+      "confirmDelete": "この記事を削除しますか？元に戻せません。",
+      "deleteSuccess": "記事を削除しました。",
+      "deleteError": "削除に失敗しました。再度お試しください。"
+    }
+  },
+  "user": {
+    "title": "マイページ",
+    "description": "ログイン・登録・プロフィール情報を管理。",
+    "login": "ログイン",
+    "register": "登録",
+    "logout": "ログアウト",
+    "profileEdit": "プロフィール編集",
+    "placeholders": {
+      "email": "メールアドレス",
+      "name": "氏名",
+      "headline": "肩書き",
+      "location": "所在地",
+      "bio": "自己紹介",
+      "intro": "自己紹介を一言追加",
+      "avatar": "アバターアップロード（base64）"
+    },
+    "buttons": {
+      "login": "ログイン",
+      "register": "登録",
+      "updateProfile": "プロフィールを更新"
+    },
+    "alerts": {
+      "loginError": "ログインに失敗しました。",
+      "registerError": "登録に失敗しました。",
+      "profileUpdated": "プロフィールを更新しました（ローカルストレージ）。"
+    }
+  },
+  "auth": {
+    "userNotFound": "ユーザーが見つかりません。",
+    "emailExists": "メールアドレスは既に登録されています。",
+    "adminRequired": "管理者のみがアクセスできます。"
+  }
+}

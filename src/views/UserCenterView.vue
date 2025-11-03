@@ -1,8 +1,8 @@
 <template>
   <section class="mx-auto max-w-3xl space-y-6">
     <header class="space-y-3">
-      <h1 class="text-2xl font-bold">个人中心</h1>
-      <p class="text-sm text-slate-500">管理登录、注册与资料信息。</p>
+      <h1 class="text-2xl font-bold">{{ t('user.title') }}</h1>
+      <p class="text-sm text-slate-500">{{ t('user.description') }}</p>
     </header>
 
     <div v-if="!auth.user" class="grid gap-6 md:grid-cols-2">
@@ -10,39 +10,39 @@
         class="space-y-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
         @submit.prevent="onLogin"
       >
-        <h2 class="text-lg font-semibold">登录</h2>
+        <h2 class="text-lg font-semibold">{{ t('user.login') }}</h2>
         <input
           v-model="loginEmail"
           type="email"
           required
-          placeholder="邮箱"
+          :placeholder="t('user.placeholders.email')"
           class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
         />
         <button class="w-full rounded bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
-          登录
+          {{ t('user.buttons.login') }}
         </button>
       </form>
       <form
         class="space-y-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
         @submit.prevent="onRegister"
       >
-        <h2 class="text-lg font-semibold">注册</h2>
+        <h2 class="text-lg font-semibold">{{ t('user.register') }}</h2>
         <input
           v-model="registerName"
           type="text"
           required
-          placeholder="姓名"
+          :placeholder="t('user.placeholders.name')"
           class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
         />
         <input
           v-model="registerEmail"
           type="email"
           required
-          placeholder="邮箱"
+          :placeholder="t('user.placeholders.email')"
           class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
         />
         <button class="w-full rounded bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
-          注册
+          {{ t('user.buttons.register') }}
         </button>
       </form>
     </div>
@@ -53,11 +53,11 @@
           <img :src="auth.user.avatar || placeholder" alt="" class="h-16 w-16 rounded-full object-cover" />
           <div>
             <h2 class="text-xl font-semibold">{{ auth.user.name }}</h2>
-            <p class="text-sm text-slate-500">{{ auth.user.headline || '添加一句话介绍自己' }}</p>
+            <p class="text-sm text-slate-500">{{ auth.user.headline || t('user.placeholders.intro') }}</p>
           </div>
         </header>
         <button class="mt-4 rounded border border-slate-200 px-3 py-2 text-sm hover:border-brand dark:border-slate-700" @click="auth.logout">
-          退出登录
+          {{ t('user.logout') }}
         </button>
       </div>
 
@@ -65,46 +65,47 @@
         class="space-y-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900"
         @submit.prevent="onProfileUpdate"
       >
-        <h3 class="text-lg font-semibold">资料编辑</h3>
+        <h3 class="text-lg font-semibold">{{ t('user.profileEdit') }}</h3>
         <div class="grid gap-4 md:grid-cols-2">
           <input
             v-model="profile.name"
             type="text"
-            placeholder="姓名"
+            :placeholder="t('user.placeholders.name')"
             class="rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
           />
           <input
             v-model="profile.headline"
             type="text"
-            placeholder="职位头衔"
+            :placeholder="t('user.placeholders.headline')"
             class="rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
           />
           <input
             v-model="profile.location"
             type="text"
-            placeholder="所在地"
+            :placeholder="t('user.placeholders.location')"
             class="rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
           />
           <select
             v-model="profile.language"
             class="rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
           >
-            <option value="zh-CN">中文</option>
-            <option value="en">English</option>
+            <option value="zh-CN">{{ t('language.zh') }}</option>
+            <option value="en-US">{{ t('language.en') }}</option>
+            <option value="ja-JP">{{ t('language.ja') }}</option>
           </select>
         </div>
         <textarea
           v-model="profile.bio"
           rows="4"
-          placeholder="个人简介"
+          :placeholder="t('user.placeholders.bio')"
           class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
         />
         <label class="flex flex-col gap-2 text-sm">
-          头像上传（base64）
+          {{ t('user.placeholders.avatar') }}
           <input type="file" accept="image/*" @change="onAvatarChange" />
         </label>
         <button class="rounded bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
-          更新资料
+          {{ t('user.buttons.updateProfile') }}
         </button>
       </form>
     </div>
@@ -114,8 +115,10 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 
 const auth = useAuthStore()
+const { t } = useI18n()
 
 const loginEmail = ref('')
 const registerEmail = ref('')
@@ -134,7 +137,11 @@ const profile = reactive({
 watch(
   () => auth.user,
   (user) => {
-    if (user) Object.assign(profile, user)
+    if (user) {
+      Object.assign(profile, user)
+      if (profile.language === 'en') profile.language = 'en-US'
+      if (profile.language === 'ja') profile.language = 'ja-JP'
+    }
   },
   { immediate: true }
 )
@@ -143,7 +150,7 @@ const onLogin = async () => {
   try {
     await auth.login(loginEmail.value)
   } catch (error) {
-    window.alert(error?.message ?? '登录失败')
+    window.alert(error?.message ?? t('user.alerts.loginError'))
   }
 }
 
@@ -151,13 +158,13 @@ const onRegister = async () => {
   try {
     await auth.register({ email: registerEmail.value, name: registerName.value })
   } catch (error) {
-    window.alert(error?.message ?? '注册失败')
+    window.alert(error?.message ?? t('user.alerts.registerError'))
   }
 }
 
 const onProfileUpdate = () => {
   auth.updateProfile(profile)
-  window.alert('资料已更新（LocalStorage）')
+  window.alert(t('user.alerts.profileUpdated'))
 }
 
 const onAvatarChange = async (event) => {

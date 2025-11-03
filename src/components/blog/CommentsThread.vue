@@ -1,13 +1,13 @@
 <template>
-  <section aria-label="评论区" class="space-y-6">
+  <section :aria-label="t('comments.sectionAria')" class="space-y-6">
     <header class="flex items-center justify-between">
-      <h3 class="text-lg font-semibold">评论</h3>
+      <h3 class="text-lg font-semibold">{{ t('comments.title') }}</h3>
       <button
         v-if="canComment"
         class="rounded bg-brand px-3 py-2 text-sm font-medium text-white hover:bg-brand-dark"
         @click="startNewComment"
       >
-        写评论
+        {{ t('comments.write') }}
       </button>
     </header>
 
@@ -20,14 +20,14 @@
         v-model="formState.content"
         class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
         rows="3"
-        placeholder="分享你的想法..."
+        :placeholder="t('comments.placeholder')"
         required
       />
       <EmojiPicker @select="appendEmoji" />
       <div class="flex justify-end gap-3">
-        <button class="rounded px-3 py-2 text-sm" type="button" @click="cancel">取消</button>
+        <button class="rounded px-3 py-2 text-sm" type="button" @click="cancel">{{ t('comments.cancel') }}</button>
         <button class="rounded bg-brand px-3 py-2 text-sm font-medium text-white hover:bg-brand-dark" type="submit">
-          发布
+          {{ t('comments.submit') }}
         </button>
       </div>
     </form>
@@ -43,7 +43,7 @@
             <span class="font-medium">{{ resolveAuthor(thread.authorId) }}</span>
             <time class="ml-2 text-xs text-slate-500">{{ formatDate(thread.createdAt) }}</time>
           </div>
-          <button v-if="canComment" class="text-sm text-brand hover:underline" @click="replyTo(thread.id)">回复</button>
+          <button v-if="canComment" class="text-sm text-brand hover:underline" @click="replyTo(thread.id)">{{ t('comments.reply') }}</button>
         </header>
         <p class="text-sm leading-relaxed">{{ thread.content }}</p>
         <div class="flex gap-2">
@@ -62,7 +62,7 @@
                 <span class="font-medium">{{ resolveAuthor(child.authorId) }}</span>
                 <time class="ml-2 text-xs text-slate-500">{{ formatDate(child.createdAt) }}</time>
               </div>
-              <button v-if="canComment" class="text-xs text-brand hover:underline" @click="replyTo(child.id)">回复</button>
+              <button v-if="canComment" class="text-xs text-brand hover:underline" @click="replyTo(child.id)">{{ t('comments.reply') }}</button>
             </div>
             <p class="mt-2 leading-relaxed">{{ child.content }}</p>
           </li>
@@ -73,13 +73,16 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, watch } from 'vue'
 import { useCommentsStore } from '@/stores/comments'
 import { useAuthStore } from '@/stores/auth'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/en'
+import 'dayjs/locale/ja'
 import EmojiPicker from './EmojiPicker.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   postId: {
@@ -89,10 +92,24 @@ const props = defineProps({
 })
 
 dayjs.extend(relativeTime)
-dayjs.locale('zh-cn')
+
+const localeMap = {
+  'zh-CN': 'zh-cn',
+  'en-US': 'en',
+  'ja-JP': 'ja'
+}
 
 const authStore = useAuthStore()
 const commentsStore = useCommentsStore()
+const { t, locale } = useI18n()
+
+watch(
+  () => locale.value,
+  (value) => {
+    dayjs.locale(localeMap[value] ?? 'zh-cn')
+  },
+  { immediate: true }
+)
 
 const canComment = computed(() => Boolean(authStore.user))
 const activeForm = computed(() => Boolean(formState.targetId))
@@ -142,7 +159,7 @@ const formatDate = (value) => dayjs(value).fromNow()
 
 const resolveAuthor = (authorId) => {
   const target = authStore.users.find((candidate) => candidate.id === authorId)
-  return target?.name ?? '访客'
+  return target?.name ?? t('comments.guest')
 }
 
 const threadedComments = computed(() => {

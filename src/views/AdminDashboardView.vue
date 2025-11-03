@@ -1,35 +1,35 @@
 <template>
   <section class="mx-auto max-w-6xl space-y-10">
     <header>
-      <h1 class="text-2xl font-bold">管理后台</h1>
-      <p class="text-sm text-slate-500">文章、评论、用户与访客管理（演示数据）。</p>
+      <h1 class="text-2xl font-bold">{{ t('admin.title') }}</h1>
+      <p class="text-sm text-slate-500">{{ t('admin.description') }}</p>
     </header>
 
     <div class="space-y-6">
       <div>
-        <h2 class="mb-3 text-lg font-semibold">文章管理</h2>
+        <h2 class="mb-3 text-lg font-semibold">{{ t('admin.sections.posts') }}</h2>
         <AdminTable :rows="postsStore.posts" :columns="postColumns" :row-key="rowKey">
           <template #actions="{ row }">
             <div class="flex gap-2">
-              <button class="text-xs text-brand" @click="editPost(row.id)">编辑</button>
-              <button class="text-xs text-red-500" @click="deletePost(row.id)">删除</button>
+              <button class="text-xs text-brand" @click="editPost(row.id)">{{ t('admin.posts.actions.edit') }}</button>
+              <button class="text-xs text-red-500" @click="deletePost(row.id)">{{ t('admin.posts.actions.delete') }}</button>
             </div>
           </template>
         </AdminTable>
       </div>
 
       <div>
-        <h2 class="mb-3 text-lg font-semibold">评论管理</h2>
+        <h2 class="mb-3 text-lg font-semibold">{{ t('admin.sections.comments') }}</h2>
         <AdminTable :rows="commentsStore.comments" :columns="commentColumns" :row-key="rowKey" />
       </div>
 
       <div>
-        <h2 class="mb-3 text-lg font-semibold">用户管理</h2>
+        <h2 class="mb-3 text-lg font-semibold">{{ t('admin.sections.users') }}</h2>
         <AdminTable :rows="authStore.users" :columns="userColumns" :row-key="rowKey" />
       </div>
 
       <div>
-        <h2 class="mb-3 text-lg font-semibold">访客记录</h2>
+        <h2 class="mb-3 text-lg font-semibold">{{ t('admin.sections.visitors') }}</h2>
         <AdminTable :rows="visitorsStore.visitors" :columns="visitorColumns" :row-key="rowKey" />
       </div>
     </div>
@@ -37,56 +37,69 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import AdminTable from '@/components/admin/AdminTable.vue'
 import { usePostsStore } from '@/stores/posts'
 import { useCommentsStore } from '@/stores/comments'
 import { useAuthStore } from '@/stores/auth'
 import { useVisitorsStore } from '@/stores/visitors'
+import { useI18n } from 'vue-i18n'
 
 const postsStore = usePostsStore()
 const commentsStore = useCommentsStore()
 const authStore = useAuthStore()
 const visitorsStore = useVisitorsStore()
+const router = useRouter()
+const { t } = useI18n()
 
 const rowKey = (row) => row.id
 
-const postColumns = [
-  { key: 'title', label: '标题' },
-  { key: 'category', label: '分类' },
-  { key: 'publishedAt', label: '发布时间' },
-  { key: 'views', label: '浏览' },
-  { key: 'likes', label: '点赞' },
-  { key: 'actions', label: '操作' }
-]
+const postColumns = computed(() => [
+  { key: 'title', label: t('admin.posts.columns.title') },
+  { key: 'category', label: t('admin.posts.columns.category') },
+  { key: 'publishedAt', label: t('admin.posts.columns.publishedAt') },
+  { key: 'views', label: t('admin.posts.columns.views') },
+  { key: 'likes', label: t('admin.posts.columns.likes') },
+  { key: 'actions', label: t('admin.posts.columns.actions') }
+])
 
-const commentColumns = [
-  { key: 'postId', label: '文章 ID' },
-  { key: 'content', label: '内容' },
-  { key: 'authorId', label: '作者' },
-  { key: 'createdAt', label: '时间' }
-]
+const commentColumns = computed(() => [
+  { key: 'postId', label: t('admin.comments.columns.postId') },
+  { key: 'content', label: t('admin.comments.columns.content') },
+  { key: 'authorId', label: t('admin.comments.columns.author') },
+  { key: 'createdAt', label: t('admin.comments.columns.createdAt') }
+])
 
-const userColumns = [
-  { key: 'name', label: '姓名' },
-  { key: 'email', label: '邮箱' },
-  { key: 'role', label: '角色' },
-  { key: 'language', label: '语言' }
-]
+const userColumns = computed(() => [
+  { key: 'name', label: t('admin.users.columns.name') },
+  { key: 'email', label: t('admin.users.columns.email') },
+  { key: 'role', label: t('admin.users.columns.role') },
+  { key: 'language', label: t('admin.users.columns.language') }
+])
 
-const visitorColumns = [
-  { key: 'location', label: '来源' },
-  { key: 'userAgent', label: '设备' },
-  { key: 'referrer', label: '入口' },
-  { key: 'enteredAt', label: '时间' }
-]
+const visitorColumns = computed(() => [
+  { key: 'location', label: t('admin.visitors.columns.location') },
+  { key: 'userAgent', label: t('admin.visitors.columns.userAgent') },
+  { key: 'referrer', label: t('admin.visitors.columns.referrer') },
+  { key: 'enteredAt', label: t('admin.visitors.columns.enteredAt') }
+])
 
 const editPost = (id) => {
-  window.alert(`编辑文章 ${id}（演示）`)
+  router.push({ name: 'editor', params: { id } })
 }
 
-const deletePost = (id) => {
-  postsStore.remove(id)
+const deletePost = async (id) => {
+  const confirmed = window.confirm(t('admin.alerts.confirmDelete'))
+  if (!confirmed) return
+
+  try {
+    await postsStore.remove(id)
+    window.alert(t('admin.alerts.deleteSuccess'))
+  } catch (error) {
+    console.error(error)
+    window.alert(error?.message ?? t('admin.alerts.deleteError'))
+  }
 }
 
 onMounted(async () => {

@@ -7,13 +7,15 @@
       ⭐ {{ favorites }}
     </button>
     <button class="flex items-center gap-1 hover:text-brand" @click="$emit('tip')">
-      ☕ 打赏
+      ☕ {{ t('engagement.tip') }}
     </button>
     <slot />
   </div>
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+
 defineProps({
   likes: {
     type: Number,
@@ -26,4 +28,6 @@ defineProps({
 })
 
 defineEmits(['like', 'favorite', 'tip'])
+
+const { t } = useI18n()
 </script>
