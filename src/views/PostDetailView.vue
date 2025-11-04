@@ -7,7 +7,7 @@
         <span>{{ t('post.publishedOn', { date: formatDate(post.publishedAt) }) }}</span>
         <span>{{ t('post.views', { count: post.views }) }}</span>
       </div>
-      <EngagementBar :likes="post.likes" :favorites="post.favorites" @like="toggleLike" @favorite="toggleFavorite" @tip="onTip">
+      <EngagementBar :likes="post.likes" :liked="isLiked" @like="toggleLike" @tip="onTip">
         <button class="rounded-full border border-slate-200 px-3 py-1 text-xs hover:border-brand hover:text-brand dark:border-slate-700">
           {{ t('post.share') }}
         </button>
@@ -69,6 +69,7 @@ const postId = route.params.id ? String(route.params.id) : ''
 const { t } = useI18n()
 
 const post = computed(() => postsStore.posts.find((item) => item.id === postId))
+const isLiked = computed(() => Boolean(postsStore.likes[postId]))
 
 const toc = computed(() => (post.value ? extractHeadings(post.value.content) : []))
 
@@ -82,7 +83,6 @@ const toggleLike = async () => {
     window.alert(error?.message ?? t('common.operationFailed'))
   }
 }
-const toggleFavorite = () => postsStore.toggleFavorite(postId)
 const onTip = () => window.alert(t('post.tipThanks'))
 
 onMounted(async () => {

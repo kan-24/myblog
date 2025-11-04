@@ -50,14 +50,6 @@ export const usePostsStore = defineStore('posts', {
         throw error
       }
     },
-    toggleFavorite(postId) {
-      this.favorites[postId] = !this.favorites[postId]
-      setStorage('favorites', this.favorites)
-      const post = this.posts.find((item) => item.id === postId)
-      if (post) {
-        post.favorites += this.favorites[postId] ? 1 : -1
-      }
-    },
     async toggleLike(postId) {
       const nextLiked = !this.likes[postId]
       const delta = nextLiked ? 1 : -1

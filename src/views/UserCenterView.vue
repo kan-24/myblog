@@ -41,6 +41,13 @@
           :placeholder="t('user.placeholders.email')"
           class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
         />
+        <input
+          v-model="registerPassword"
+          type="password"
+          required
+          :placeholder="t('user.placeholders.password')"
+          class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+        />
         <button class="w-full rounded bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
           {{ t('user.buttons.register') }}
         </button>
@@ -122,6 +129,7 @@ const { t } = useI18n()
 
 const loginEmail = ref('')
 const registerEmail = ref('')
+const registerPassword = ref('')
 const registerName = ref('')
 const placeholder = 'https://avatars.githubusercontent.com/u/000?v=4'
 
@@ -141,6 +149,7 @@ watch(
       Object.assign(profile, user)
       if (profile.language === 'en') profile.language = 'en-US'
       if (profile.language === 'ja') profile.language = 'ja-JP'
+      if (!profile.language) profile.language = 'zh-CN'
     }
   },
   { immediate: true }
@@ -155,8 +164,19 @@ const onLogin = async () => {
 }
 
 const onRegister = async () => {
+  if (!registerPassword.value) {
+    window.alert(t('user.alerts.passwordRequired'))
+    return
+  }
   try {
-    await auth.register({ email: registerEmail.value, name: registerName.value })
+    await auth.register({
+      email: registerEmail.value,
+      name: registerName.value,
+      password: registerPassword.value
+    })
+    registerName.value = ''
+    registerEmail.value = ''
+    registerPassword.value = ''
   } catch (error) {
     window.alert(error?.message ?? t('user.alerts.registerError'))
   }

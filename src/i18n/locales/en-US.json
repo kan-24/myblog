@@ -137,6 +137,7 @@
     "placeholders": {
       "email": "Email",
       "name": "Name",
+      "password": "Password",
       "headline": "Headline",
       "location": "Location",
       "bio": "Bio",
@@ -151,6 +152,7 @@
     "alerts": {
       "loginError": "Sign-in failed.",
       "registerError": "Registration failed.",
+      "passwordRequired": "Password is required.",
       "profileUpdated": "Profile updated (local storage)."
     }
   },

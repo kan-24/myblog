@@ -137,6 +137,7 @@
     "placeholders": {
       "email": "邮箱",
       "name": "姓名",
+      "password": "密码",
       "headline": "职位头衔",
       "location": "所在地",
       "bio": "个人简介",
@@ -151,6 +152,7 @@
     "alerts": {
       "loginError": "登录失败",
       "registerError": "注册失败",
+      "passwordRequired": "请输入密码",
       "profileUpdated": "资料已更新（LocalStorage）"
     }
   },

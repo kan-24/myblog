@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { getStorage, setStorage, removeStorage } from '@/utils/storage'
 import { i18n } from '@/i18n'
-import { loadInitialUsers } from '@/utils/dataLoader'
+import { fetchUsers, registerUser } from '@/services/api/users'
 import dayjs from 'dayjs'
 
 function buildFakeToken(userId) {
@@ -12,19 +12,42 @@ function buildFakeToken(userId) {
   }
 }
 
+function normalizeUser(raw) {
+  if (!raw) return null
+  return {
+    avatar: raw.avatar ?? raw.avatarUrl ?? '',
+    avatarUrl: raw.avatarUrl ?? raw.avatar ?? '',
+    bio: raw.bio ?? '',
+    headline: raw.headline ?? '',
+    language: raw.language ?? 'zh-CN',
+    location: raw.location ?? '',
+    status: raw.status ?? 'ACTIVE',
+    ...raw
+  }
+}
+
+const storedUsers = getStorage('users', [])
+const initialUsers = Array.isArray(storedUsers) ? storedUsers.map(normalizeUser) : []
+const initialUser = normalizeUser(getStorage('user', null))
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: getStorage('user', null),
+    user: initialUser,
     token: getStorage('token', null),
-    users: getStorage('users', []),
+    users: initialUsers,
     loaded: false
   }),
   actions: {
     async ensureLoaded() {
       if (this.loaded) return
-      if (!this.users.length) {
-        this.users = await loadInitialUsers()
+      try {
+        const users = await fetchUsers()
+        this.users = Array.isArray(users) ? users.map(normalizeUser) : []
         setStorage('users', this.users)
+      } catch (error) {
+        const fallback = getStorage('users', [])
+        this.users = Array.isArray(fallback) ? fallback.map(normalizeUser) : []
+        console.error('Failed to load users from API', error)
       }
       this.loaded = true
     },
@@ -32,31 +55,25 @@ export const useAuthStore = defineStore('auth', {
       await this.ensureLoaded()
       const existing = this.users.find((candidate) => candidate.email === email)
       if (!existing) throw new Error(i18n.global.t('auth.userNotFound'))
-      this.user = existing
+      this.user = normalizeUser(existing)
       this.token = buildFakeToken(existing.id)
-      setStorage('user', existing)
+      setStorage('user', this.user)
       setStorage('token', this.token)
     },
     async register(payload) {
       await this.ensureLoaded()
-      const exists = this.users.some((candidate) => candidate.email === payload.email)
-      if (exists) throw new Error(i18n.global.t('auth.emailExists'))
-      const newUser = {
-        id: crypto.randomUUID(),
-        name: payload.name,
+      const created = await registerUser({
         email: payload.email,
-        role: 'author',
-        bio: '',
-        avatar: '',
-        headline: '',
-        location: '',
-        language: 'zh-CN',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-      this.users.push(newUser)
+        name: payload.name,
+        password: payload.password
+      })
+      const normalized = normalizeUser(created)
+      this.users.push(normalized)
       setStorage('users', this.users)
-      await this.login(payload.email)
+      this.user = normalized
+      this.token = buildFakeToken(normalized.id)
+      setStorage('user', normalized)
+      setStorage('token', this.token)
     },
     updateProfile(data) {
       if (!this.user) return

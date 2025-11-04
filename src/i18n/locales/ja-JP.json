@@ -137,6 +137,7 @@
     "placeholders": {
       "email": "メールアドレス",
       "name": "氏名",
+      "password": "パスワード",
       "headline": "肩書き",
       "location": "所在地",
       "bio": "自己紹介",
@@ -151,6 +152,7 @@
     "alerts": {
       "loginError": "ログインに失敗しました。",
       "registerError": "登録に失敗しました。",
+      "passwordRequired": "パスワードを入力してください。",
       "profileUpdated": "プロフィールを更新しました（ローカルストレージ）。"
     }
   },

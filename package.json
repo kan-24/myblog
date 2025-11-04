@@ -12,6 +12,7 @@
     "generate": "vite-ssg build"
   },
   "dependencies": {
+    "@heroicons/vue": "^2.2.0",
     "@toast-ui/editor": "^3.2.2",
     "@tsparticles/vue3": "^3.0.1",
     "@unhead/vue": "^2.0.17",
