@@ -10,6 +10,7 @@ public interface UserMapper {
     List<UserEntity> findAll();
 
     UserEntity findByEmail(@Param("email") String email);
+    UserEntity findById(@Param("id") String id);
 
     void insert(@Param("user") UserEntity user);
 

@@ -59,7 +59,11 @@ public class UserService {
         return mapToResponse(entity);
     }
 
-    private UserResponse mapToResponse(UserEntity entity) {
+    public boolean passwordMatches(String rawPassword, String hashed) {
+        return passwordEncoder.matches(rawPassword, hashed);
+    }
+
+    public UserResponse mapToResponse(UserEntity entity) {
         String role = entity.getRole() != null ? entity.getRole() : DEFAULT_ROLE;
         return new UserResponse(
                 entity.getId(),

@@ -1,5 +1,6 @@
 package com.example.blogx.post;
 
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +14,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class PostService {
 
     private final PostMapper postMapper;
+    private final PostLikeMapper postLikeMapper;
 
-    public PostService(PostMapper postMapper) {
+    public PostService(PostMapper postMapper, PostLikeMapper postLikeMapper) {
         this.postMapper = postMapper;
+        this.postLikeMapper = postLikeMapper;
     }
 
     public PostResponse create(CreatePostRequest request) {
@@ -23,6 +26,7 @@ public class PostService {
                 ? request.getId()
                 : UUID.randomUUID().toString();
 
+        OffsetDateTime now = OffsetDateTime.now();
         PostEntity entity = new PostEntity(
                 id,
                 request.getTitle(),
@@ -33,12 +37,12 @@ public class PostService {
                 request.getCategory(),
                 String.join(",", request.getTags()),
                 request.getAuthorId(),
-                request.getPublishedAt(),
-                request.getUpdatedAt(),
-                request.getViews(),
-                request.getLikes(),
-                request.getFavorites(),
-                request.getFeatured()
+                request.getPublishedAt() != null ? request.getPublishedAt() : now.toString(),
+                request.getUpdatedAt() != null ? request.getUpdatedAt() : now.toString(),
+                request.getViews() != null ? request.getViews() : 0,
+                request.getLikes() != null ? request.getLikes() : 0,
+                request.getFavorites() != null ? request.getFavorites() : 0,
+                request.getFeatured() != null ? request.getFeatured() : Boolean.FALSE
         );
 
         postMapper.insert(entity);
@@ -46,13 +50,29 @@ public class PostService {
         return buildResponse(entity, request.getTags());
     }
 
-    public List<PostResponse> findAll() {
-        return postMapper.findAll().stream()
+    public List<PostResponse> findAll(int page, int size) {
+        int safePage = Math.max(page, 1);
+        int safeSize = Math.min(Math.max(size, 1), 50);
+        int offset = (safePage - 1) * safeSize;
+        return postMapper.findAll(safeSize, offset).stream()
                 .map(this::mapEntityToResponse)
                 .collect(Collectors.toList());
     }
 
+    public PostResponse findById(String id) {
+        PostEntity entity = postMapper.findById(id);
+        if (entity == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "文章不存在");
+        }
+        return mapEntityToResponse(entity);
+    }
+
     public PostResponse update(String id, UpdatePostRequest request) {
+        PostEntity existing = postMapper.findById(id);
+        if (existing == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "文章不存在");
+        }
+
         PostEntity entity = new PostEntity(
                 id,
                 request.getTitle(),
@@ -62,13 +82,13 @@ public class PostService {
                 request.getCover(),
                 request.getCategory(),
                 String.join(",", request.getTags()),
-                request.getAuthorId(),
-                request.getPublishedAt(),
-                request.getUpdatedAt(),
-                request.getViews(),
-                request.getLikes(),
-                request.getFavorites(),
-                request.getFeatured()
+                existing.getAuthorId(),
+                existing.getPublishedAt(),
+                OffsetDateTime.now().toString(),
+                request.getViews() != null ? request.getViews() : existing.getViews(),
+                request.getLikes() != null ? request.getLikes() : existing.getLikes(),
+                request.getFavorites() != null ? request.getFavorites() : existing.getFavorites(),
+                request.getFeatured() != null ? request.getFeatured() : existing.getFeatured()
         );
 
         postMapper.update(entity);
@@ -76,28 +96,39 @@ public class PostService {
         return buildResponse(entity, request.getTags());
     }
 
-    public PostResponse toggleLike(String id, ToggleLikeRequest request) {
-        PostEntity entity = postMapper.findById(id);
-        if (entity == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
+    public PostResponse like(String id, String userId) {
+        PostEntity entity = requirePost(id);
+        if (postLikeMapper.exists(id, userId)) {
+            return mapEntityToResponse(entity);
         }
+        postLikeMapper.insert(id, userId, OffsetDateTime.now());
+        postMapper.adjustLikes(id, 1);
+        entity.setLikes((entity.getLikes() != null ? entity.getLikes() : 0) + 1);
+        return mapEntityToResponse(entity);
+    }
 
-        int currentLikes = entity.getLikes() != null ? entity.getLikes() : 0;
-        int delta = Boolean.TRUE.equals(request.getLiked()) ? 1 : -1;
-        int updatedLikes = Math.max(0, currentLikes + delta);
-
-        postMapper.updateLikes(id, updatedLikes);
-        entity.setLikes(updatedLikes);
-
+    public PostResponse unlike(String id, String userId) {
+        PostEntity entity = requirePost(id);
+        if (!postLikeMapper.exists(id, userId)) {
+            return mapEntityToResponse(entity);
+        }
+        postLikeMapper.delete(id, userId);
+        postMapper.adjustLikes(id, -1);
+        entity.setLikes(Math.max(0, (entity.getLikes() != null ? entity.getLikes() : 0) - 1));
         return mapEntityToResponse(entity);
     }
 
     public void delete(String id) {
+        PostEntity entity = requirePost(id);
+        postMapper.delete(entity.getId());
+    }
+
+    private PostEntity requirePost(String id) {
         PostEntity entity = postMapper.findById(id);
         if (entity == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "文章不存在");
         }
-        postMapper.delete(id);
+        return entity;
     }
 
     private PostResponse mapEntityToResponse(PostEntity entity) {

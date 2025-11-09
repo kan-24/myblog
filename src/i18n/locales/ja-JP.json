@@ -50,7 +50,15 @@
     "cancel": "キャンセル",
     "submit": "投稿",
     "reply": "返信",
-    "guest": "ゲスト"
+    "guest": "ゲスト",
+    "pending": "承認待ち",
+    "hidden": "非表示",
+    "loading": "読み込み中...",
+    "loadMore": "さらにコメントを表示",
+    "loginRequired": "コメントするにはログインしてください",
+    "loginButton": "ログイン",
+    "delete": "削除",
+    "confirmDelete": "このコメントを削除しますか？元に戻せません。"
   },
   "editor": {
     "title": "執筆エディタ",

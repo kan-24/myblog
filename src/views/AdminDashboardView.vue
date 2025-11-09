@@ -28,10 +28,6 @@
         <AdminTable :rows="authStore.users" :columns="userColumns" :row-key="rowKey" />
       </div>
 
-      <div>
-        <h2 class="mb-3 text-lg font-semibold">{{ t('admin.sections.visitors') }}</h2>
-        <AdminTable :rows="visitorsStore.visitors" :columns="visitorColumns" :row-key="rowKey" />
-      </div>
     </div>
   </section>
 </template>
@@ -43,13 +39,11 @@ import AdminTable from '@/components/admin/AdminTable.vue'
 import { usePostsStore } from '@/stores/posts'
 import { useCommentsStore } from '@/stores/comments'
 import { useAuthStore } from '@/stores/auth'
-import { useVisitorsStore } from '@/stores/visitors'
 import { useI18n } from 'vue-i18n'
 
 const postsStore = usePostsStore()
 const commentsStore = useCommentsStore()
 const authStore = useAuthStore()
-const visitorsStore = useVisitorsStore()
 const router = useRouter()
 const { t } = useI18n()
 
@@ -78,13 +72,6 @@ const userColumns = computed(() => [
   { key: 'language', label: t('admin.users.columns.language') }
 ])
 
-const visitorColumns = computed(() => [
-  { key: 'location', label: t('admin.visitors.columns.location') },
-  { key: 'userAgent', label: t('admin.visitors.columns.userAgent') },
-  { key: 'referrer', label: t('admin.visitors.columns.referrer') },
-  { key: 'enteredAt', label: t('admin.visitors.columns.enteredAt') }
-])
-
 const editPost = (id) => {
   router.push({ name: 'editor', params: { id } })
 }
@@ -106,8 +93,7 @@ onMounted(async () => {
   await Promise.all([
     postsStore.ensureLoaded(),
     commentsStore.ensureLoaded(),
-    authStore.ensureLoaded?.(),
-    visitorsStore.ensureLoaded()
+    authStore.ensureLoaded?.()
   ])
 })
 </script>

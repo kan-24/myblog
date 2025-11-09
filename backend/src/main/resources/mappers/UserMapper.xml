@@ -62,6 +62,30 @@
         LIMIT 1
     </select>
 
+    <select id="findById" parameterType="string" resultMap="UserResultMap">
+        SELECT
+            u.id,
+            u.email,
+            u.password_hash,
+            u.name,
+            u.avatar_url,
+            u.status,
+            u.last_login_at,
+            u.created_at,
+            u.updated_at,
+            (
+                SELECT r.name
+                FROM user_roles ur
+                JOIN roles r ON r.id = ur.role_id
+                WHERE ur.user_id = u.id
+                ORDER BY r.name
+                LIMIT 1
+            ) AS role
+        FROM users u
+        WHERE u.id = #{id}
+        LIMIT 1
+    </select>
+
     <insert id="insert" parameterType="com.example.blogx.user.UserEntity">
         INSERT INTO users (
             id,

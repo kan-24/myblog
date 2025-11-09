@@ -77,3 +77,46 @@ CREATE OR REPLACE TRIGGER trigger_update_users_timestamp
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();;
+
+-- 评论表，支持楼中楼
+CREATE TABLE IF NOT EXISTS comments (
+    id          VARCHAR(64) PRIMARY KEY,
+    post_id     VARCHAR(64) NOT NULL,
+    author_id   VARCHAR(64) NOT NULL,
+    parent_id   VARCHAR(64),                -- NULL 表示顶级评论
+    content     TEXT        NOT NULL,
+    status      VARCHAR(20) NOT NULL DEFAULT 'VISIBLE',  -- 审核状态：VISIBLE / HIDDEN / PENDING
+    created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_comments_post  FOREIGN KEY (post_id)  REFERENCES posts(id)  ON DELETE CASCADE,
+    CONSTRAINT fk_comments_user  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_comments_parent FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
+);
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_class c
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE c.relkind = 'i'
+          AND c.relname = 'idx_comments_post_created_at'
+    ) THEN
+        EXECUTE 'CREATE INDEX idx_comments_post_created_at ON comments (post_id, created_at DESC)';
+    END IF;
+END;
+$$;
+
+-- 点赞 / 反应表，这里仅存“点赞”类型，若需要可扩展 reaction_type
+CREATE TABLE IF NOT EXISTS post_likes (
+    post_id    VARCHAR(64) NOT NULL,
+    user_id    VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (post_id, user_id),
+    CONSTRAINT fk_post_likes_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    CONSTRAINT fk_post_likes_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 如需收藏或其他反应，可在 post_likes 中新增 reaction_type ENUM/VARCHAR，并把主键改成 (post_id, user_id, reaction_type)

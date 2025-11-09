@@ -28,3 +28,16 @@ button {
 a {
   color: inherit;
 }
+
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: none !important;
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+}
+
+.custom-select::-ms-expand {
+  display: none;
+}

@@ -1,17 +1,7 @@
 import { defineStore } from 'pinia'
 import { getStorage, setStorage, removeStorage } from '@/utils/storage'
 import { i18n } from '@/i18n'
-import { fetchUsers, registerUser } from '@/services/api/users'
-import dayjs from 'dayjs'
-
-function buildFakeToken(userId) {
-  return {
-    accessToken: `demo-${userId}-${crypto.randomUUID()}`,
-    refreshToken: `demo-refresh-${userId}-${crypto.randomUUID()}`,
-    expiresAt: dayjs().add(7, 'day').valueOf()
-  }
-}
-
+import { fetchUsers, registerUser, loginUser } from '@/services/api/users'
 function normalizeUser(raw) {
   if (!raw) return null
   return {
@@ -51,27 +41,29 @@ export const useAuthStore = defineStore('auth', {
       }
       this.loaded = true
     },
-    async login(email) {
-      await this.ensureLoaded()
-      const existing = this.users.find((candidate) => candidate.email === email)
-      if (!existing) throw new Error(i18n.global.t('auth.userNotFound'))
-      this.user = normalizeUser(existing)
-      this.token = buildFakeToken(existing.id)
-      setStorage('user', this.user)
+    async login(payload) {
+      const response = await loginUser(payload)
+      const normalized = normalizeUser(response.user)
+      this.user = normalized
+      this.token = response.token
+      if (!this.users.some((user) => user.id === normalized.id)) {
+        this.users.push(normalized)
+        setStorage('users', this.users)
+      }
+      setStorage('user', normalized)
       setStorage('token', this.token)
     },
     async register(payload) {
-      await this.ensureLoaded()
-      const created = await registerUser({
+      const response = await registerUser({
         email: payload.email,
         name: payload.name,
         password: payload.password
       })
-      const normalized = normalizeUser(created)
+      const normalized = normalizeUser(response.user)
       this.users.push(normalized)
       setStorage('users', this.users)
       this.user = normalized
-      this.token = buildFakeToken(normalized.id)
+      this.token = response.token
       setStorage('user', normalized)
       setStorage('token', this.token)
     },

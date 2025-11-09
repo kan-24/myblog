@@ -19,7 +19,7 @@
 
     <p v-else class="py-16 text-center text-slate-500">{{ t('home.empty') }}</p>
 
-    <IntersectionObserver @intersect="loadMore" />
+    <IntersectionObserver v-if="postsStore.hasMore" @intersect="loadMore" />
   </section>
 </template>
 
@@ -46,17 +46,15 @@ const state = reactive({
   tag: ''
 })
 
-const page = ref(1)
-const pageSize = 10
-const loadMore = () => {
-  page.value += 1
+const loadMore = async () => {
+  if (postsStore.loading || !postsStore.hasMore) return
+  await postsStore.fetchNextPage()
 }
 
 const onFiltersChange = (payload) => {
   state.search = payload.search
   state.category = payload.category
   state.tag = payload.tag
-  page.value = 1
 }
 
 const filteredPosts = computed(() => {
@@ -72,7 +70,7 @@ const filteredPosts = computed(() => {
   })
 })
 
-const visiblePosts = computed(() => filteredPosts.value.slice(0, page.value * pageSize))
+const visiblePosts = computed(() => filteredPosts.value)
 
 onMounted(async () => {
   await Promise.all([postsStore.ensureLoaded(), commentsStore.ensureLoaded()])

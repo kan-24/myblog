@@ -50,7 +50,15 @@
     "cancel": "Cancel",
     "submit": "Publish",
     "reply": "Reply",
-    "guest": "Guest"
+    "guest": "Guest",
+    "pending": "Pending",
+    "hidden": "Hidden",
+    "loading": "Loading...",
+    "loadMore": "Load more comments",
+    "loginRequired": "Please sign in to comment",
+    "loginButton": "Sign in",
+    "delete": "Delete",
+    "confirmDelete": "Delete this comment permanently?"
   },
   "editor": {
     "title": "Writing Studio",

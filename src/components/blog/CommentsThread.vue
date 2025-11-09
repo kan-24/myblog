@@ -9,6 +9,13 @@
       >
         {{ t('comments.write') }}
       </button>
+      <button
+        v-else
+        class="rounded border border-slate-200 px-3 py-2 text-sm hover:border-brand dark:border-slate-700"
+        @click="promptLogin"
+      >
+        {{ t('comments.loginButton') }}
+      </button>
     </header>
 
     <form
@@ -43,18 +50,24 @@
             <span class="font-medium">{{ resolveAuthor(thread.authorId) }}</span>
             <time class="ml-2 text-xs text-slate-500">{{ formatDate(thread.createdAt) }}</time>
           </div>
-          <button v-if="canComment" class="text-sm text-brand hover:underline" @click="replyTo(thread.id)">{{ t('comments.reply') }}</button>
+          <div class="flex items-center gap-3">
+            <span
+              v-if="thread.status !== 'VISIBLE'"
+              class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-500 dark:bg-slate-900"
+            >
+              {{ thread.status === 'PENDING' ? t('comments.pending') : t('comments.hidden') }}
+            </span>
+            <button v-if="canComment" class="text-sm text-brand hover:underline" @click="replyTo(thread.id)">{{ t('comments.reply') }}</button>
+            <button
+              v-if="canModerate"
+              class="text-xs text-red-500 hover:underline"
+              @click="requestDelete(thread.id)"
+            >
+              {{ t('comments.delete') }}
+            </button>
+          </div>
         </header>
         <p class="text-sm leading-relaxed">{{ thread.content }}</p>
-        <div class="flex gap-2">
-          <span
-            v-for="reaction in thread.reactions"
-            :key="reaction"
-            class="rounded-full bg-slate-100 px-2 py-1 text-sm dark:bg-slate-800"
-          >
-            {{ reaction }}
-          </span>
-        </div>
         <ul class="space-y-3 border-l border-slate-200 pl-4 dark:border-slate-800" v-if="thread.children.length">
           <li v-for="child in thread.children" :key="child.id" class="rounded-lg bg-slate-50 p-3 text-sm dark:bg-slate-950">
             <div class="flex items-center justify-between">
@@ -62,13 +75,39 @@
                 <span class="font-medium">{{ resolveAuthor(child.authorId) }}</span>
                 <time class="ml-2 text-xs text-slate-500">{{ formatDate(child.createdAt) }}</time>
               </div>
-              <button v-if="canComment" class="text-xs text-brand hover:underline" @click="replyTo(child.id)">{{ t('comments.reply') }}</button>
+              <div class="flex items-center gap-3">
+                <span
+                  v-if="child.status !== 'VISIBLE'"
+                  class="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-500 dark:bg-slate-900"
+                >
+                  {{ child.status === 'PENDING' ? t('comments.pending') : t('comments.hidden') }}
+                </span>
+                <button v-if="canComment" class="text-xs text-brand hover:underline" @click="replyTo(child.id)">{{ t('comments.reply') }}</button>
+                <button
+                  v-if="canModerate"
+                  class="text-xs text-red-500 hover:underline"
+                  @click="requestDelete(child.id)"
+                >
+                  {{ t('comments.delete') }}
+                </button>
+              </div>
             </div>
             <p class="mt-2 leading-relaxed">{{ child.content }}</p>
           </li>
         </ul>
       </li>
     </ul>
+
+    <div v-if="hasMore" class="text-center">
+      <button
+        class="rounded border border-slate-200 px-4 py-2 text-sm hover:border-brand dark:border-slate-700"
+        :disabled="loading"
+        @click="loadMore"
+      >
+        <span v-if="loading">{{ t('comments.loading') }}</span>
+        <span v-else>{{ t('comments.loadMore') }}</span>
+      </button>
+    </div>
   </section>
 </template>
 
@@ -111,8 +150,12 @@ watch(
   { immediate: true }
 )
 
-const canComment = computed(() => Boolean(authStore.user))
+const canComment = computed(() => Boolean(authStore.token))
+const canModerate = computed(() => authStore.user?.role === 'admin')
 const activeForm = computed(() => Boolean(formState.targetId))
+const commentsList = computed(() => commentsStore.listByPost(props.postId))
+const hasMore = computed(() => commentsStore.hasMore(props.postId))
+const loading = computed(() => commentsStore.loading(props.postId))
 
 const formState = reactive({
   targetId: null,
@@ -124,12 +167,20 @@ const appendEmoji = (emoji) => {
   formState.content = `${formState.content}${emoji}`
 }
 
+const ensureLoggedIn = () => {
+  if (authStore.token) return true
+  promptLogin()
+  return false
+}
+
 const startNewComment = () => {
+  if (!ensureLoggedIn()) return
   formState.targetId = 'new'
   formState.parentId = null
 }
 
 const replyTo = (parentId) => {
+  if (!ensureLoggedIn()) return
   formState.targetId = parentId
   formState.parentId = parentId
 }
@@ -140,19 +191,19 @@ const cancel = () => {
   formState.parentId = null
 }
 
-const submitComment = () => {
-  if (!authStore.user) return
-  const newComment = {
-    id: crypto.randomUUID(),
-    postId: props.postId,
-    authorId: authStore.user.id,
-    parentId: formState.parentId,
-    content: formState.content.trim(),
-    createdAt: new Date().toISOString(),
-    reactions: []
+const submitComment = async () => {
+  if (!ensureLoggedIn()) return
+  try {
+    await commentsStore.submit(props.postId, {
+      content: formState.content,
+      parentId: formState.parentId
+    })
+    await commentsStore.ensureLoaded(props.postId, true)
+    cancel()
+  } catch (error) {
+    console.error(error)
+    window.alert(error?.message ?? t('common.operationFailed'))
   }
-  commentsStore.add(newComment)
-  cancel()
 }
 
 const formatDate = (value) => dayjs(value).fromNow()
@@ -162,8 +213,12 @@ const resolveAuthor = (authorId) => {
   return target?.name ?? t('comments.guest')
 }
 
+const promptLogin = () => {
+  window.alert(t('comments.loginRequired'))
+}
+
 const threadedComments = computed(() => {
-  const source = commentsStore.byPost(props.postId)
+  const source = commentsList.value
   const map = new Map()
   const roots = []
 
@@ -183,7 +238,33 @@ const threadedComments = computed(() => {
   return roots
 })
 
-onMounted(async () => {
-  await authStore.ensureLoaded?.()
-})
+const loadMore = async () => {
+  if (!loading.value && hasMore.value) {
+    await commentsStore.ensureLoaded(props.postId)
+  }
+}
+
+const requestDelete = async (commentId) => {
+  if (!canModerate.value) return
+  const confirmed = window.confirm(t('comments.confirmDelete'))
+  if (!confirmed) return
+  try {
+    await commentsStore.remove(props.postId, commentId)
+    await commentsStore.ensureLoaded(props.postId, true)
+  } catch (error) {
+    console.error(error)
+    window.alert(error?.message ?? t('common.operationFailed'))
+  }
+}
+
+watch(
+  () => props.postId,
+  async (next) => {
+    if (!next) return
+    await commentsStore.ensureLoaded(next, true)
+  },
+  { immediate: true }
+)
+
+authStore.ensureLoaded?.()
 </script>

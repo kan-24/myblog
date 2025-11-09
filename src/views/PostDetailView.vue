@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePostsStore } from '@/stores/posts'
 import { useHead } from '@unhead/vue'
@@ -68,7 +68,7 @@ const route = useRoute()
 const postId = route.params.id ? String(route.params.id) : ''
 const { t } = useI18n()
 
-const post = computed(() => postsStore.posts.find((item) => item.id === postId))
+const post = ref(null)
 const isLiked = computed(() => Boolean(postsStore.likes[postId]))
 
 const toc = computed(() => (post.value ? extractHeadings(post.value.content) : []))
@@ -85,8 +85,18 @@ const toggleLike = async () => {
 }
 const onTip = () => window.alert(t('post.tipThanks'))
 
+const loadPost = async () => {
+  try {
+    await postsStore.ensureLoaded()
+    post.value = await postsStore.fetchById(postId)
+  } catch (error) {
+    console.error(error)
+    post.value = null
+  }
+}
+
 onMounted(async () => {
-  await postsStore.ensureLoaded()
+  await loadPost()
 })
 
 useHead(() => ({

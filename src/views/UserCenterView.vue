@@ -18,6 +18,13 @@
           :placeholder="t('user.placeholders.email')"
           class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
         />
+        <input
+          v-model="loginPassword"
+          type="password"
+          required
+          :placeholder="t('user.placeholders.password')"
+          class="w-full rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+        />
         <button class="w-full rounded bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
           {{ t('user.buttons.login') }}
         </button>
@@ -92,14 +99,17 @@
             :placeholder="t('user.placeholders.location')"
             class="rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
           />
-          <select
-            v-model="profile.language"
-            class="rounded border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
-          >
-            <option value="zh-CN">{{ t('language.zh') }}</option>
-            <option value="en-US">{{ t('language.en') }}</option>
-            <option value="ja-JP">{{ t('language.ja') }}</option>
-          </select>
+          <div class="relative">
+            <select
+              v-model="profile.language"
+              class="custom-select w-full rounded border border-slate-200 px-3 py-2 pr-10 text-sm dark:border-slate-700 dark:bg-slate-800"
+            >
+              <option value="zh-CN">{{ t('language.zh') }}</option>
+              <option value="en-US">{{ t('language.en') }}</option>
+              <option value="ja-JP">{{ t('language.ja') }}</option>
+            </select>
+            <ChevronDownIcon class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+          </div>
         </div>
         <textarea
           v-model="profile.bio"
@@ -123,11 +133,13 @@
 import { reactive, ref, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
+import { ChevronDownIcon } from '@heroicons/vue/24/solid'
 
 const auth = useAuthStore()
 const { t } = useI18n()
 
 const loginEmail = ref('')
+const loginPassword = ref('')
 const registerEmail = ref('')
 const registerPassword = ref('')
 const registerName = ref('')
@@ -156,8 +168,14 @@ watch(
 )
 
 const onLogin = async () => {
+  if (!loginPassword.value) {
+    window.alert(t('user.alerts.passwordRequired'))
+    return
+  }
   try {
-    await auth.login(loginEmail.value)
+    await auth.login({ email: loginEmail.value, password: loginPassword.value })
+    loginEmail.value = ''
+    loginPassword.value = ''
   } catch (error) {
     window.alert(error?.message ?? t('user.alerts.loginError'))
   }

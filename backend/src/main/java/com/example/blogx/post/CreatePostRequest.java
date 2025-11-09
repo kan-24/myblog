@@ -16,7 +16,6 @@ public class CreatePostRequest {
     private String category;
     @NotNull
     private List<String> tags;
-    @NotBlank
     private String authorId;
     @NotBlank
     private String publishedAt;

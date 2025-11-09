@@ -50,7 +50,15 @@
     "cancel": "取消",
     "submit": "发布",
     "reply": "回复",
-    "guest": "访客"
+    "guest": "访客",
+    "pending": "待审核",
+    "hidden": "已隐藏",
+    "loading": "加载中...",
+    "loadMore": "加载更多评论",
+    "loginRequired": "请先登录后再评论",
+    "loginButton": "去登录",
+    "delete": "删除",
+    "confirmDelete": "确定要删除这条评论吗？删除后无法恢复。"
   },
   "editor": {
     "title": "写作编辑器",
